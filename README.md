@@ -1,4 +1,4 @@
-# BubbleePop 2.0
+# BubbleePop
 BubbleePop implementation in Python
 
 # How to Run
