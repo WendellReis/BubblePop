@@ -14,8 +14,6 @@ class Game:
         with open("conf.json", "r") as f:
             conf = json.load(f)
 
-        self.id = 0
-
         self.STATE_SETUP_SKY = globals.STATE_SETUP_SKY
         self.STATE_SWAP_BUBBLEES = globals.STATE_SWAP_BUBBLEES
         self.STATE_DROP_BUBBLEES = globals.STATE_DROP_BUBBLEES
@@ -45,13 +43,30 @@ class Game:
         self.power_stack = conf["power_stack"]
     
         self.memory = None
-    
+        self.history = [self.get_state()]
+        self.record_state()
+        
+        self.load_buttons()
+
     def get_board(self):
         return self.board
     
     def get_score(self):
         return self.score
     
+    def load_buttons(self):
+        x,y = (1200,1300)
+        self.back_btn = {
+            "pos": (x,y),
+            "rect": pygame.Rect(x,y,120,120)
+        }
+
+    def get_back_btn(self):
+        return self.back_btn
+    
+    def record_state(self):
+        self.history.append(self.get_state())
+
     def get_state(self):
         state = {}
         state["turn"] = self.turn
@@ -64,6 +79,7 @@ class Game:
         state["score"] = self.score
         state["power_stack"] = self.power_stack
         state["bubblees_in_bag"] = self.board.get_bubblees_in_bag()
+        state["bag_color"] = self.board.get_bag_color()
         return state
 
     def set_state(self,state):
@@ -75,25 +91,30 @@ class Game:
         self.score = state["score"]
         self.power_stack = state["power_stack"]
         self.board.set_bubblees_in_bag(state["bubblees_in_bag"])
+        self.board.set_bag_color(state["bag_color"])
 
     def setup_sky(self,event):
         if self.board.verify_setup_sky():
             if self.board.is_full_sky():
-                self.set_state(action.EXECUTE(self.get_state(),"ENDGAME"))
+                self.set_state(action.EXECUTE(self.get_state(),"SWAP_BUBBLESES"))
+                self.record_state()
                 return
 
-            self.board.generate_bag_bubblee()
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.board.get_bag_color() not in globals.COLORS:
+                self.set_state(action.EXECUTE(self.get_state(),"GENERATE_BUBBLEE",self.board.generate_color()))
+                self.record_state()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.memory is None:
                     self.memory = self.board.get_sky_click(event,empty=True)
 
                     if self.memory is not None:
-                        data = [self.memory,self.board.get_bag_color()]
-                        new_state = action.EXECUTE(self.get_state(),"SETUP",data)
+                        new_state = action.EXECUTE(self.get_state(),"SETUP",self.memory)
+                        self.record_state()
                         self.set_state(new_state)
                         self.memory = None
         else:
             self.set_state(action.EXECUTE(self.get_state(),"CHECKWIN"))
+            self.record_state()
 
     def swap_bubblees(self,event):
         pass

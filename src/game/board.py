@@ -46,11 +46,6 @@ class Board:
     def set_sky(self,matriz):
         self.sky.set_sky(matriz)
 
-    def generate_bag_bubblee(self):
-        if self.bag_color is None and self.bubblees_in_bag > 0:
-            self.bag_color = self.colors[random.randint(0,len(self.colors)-1)]
-            self.bubblees_in_bag-=1
-
     def verify_setup_sky(self):
         return self.bubblees_in_bag >= self.sky.count_empty()
     
@@ -82,3 +77,12 @@ class Board:
     def set_bubblees_in_bag(self,value):
         if value >= 0:
             self.bubblees_in_bag = value
+
+    def generate_color(self):
+        return self.colors[random.randint(0,len(self.colors)-1)]
+
+    def set_bag_color(self,color=None):
+        if color in globals.COLORS:
+            self.bag_color = color
+        else:
+            self.bag_color = None

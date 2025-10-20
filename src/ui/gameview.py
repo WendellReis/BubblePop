@@ -32,6 +32,7 @@ class GameView:
         self.cell_invisible_image.set_alpha(0)
         self.bg_image = pygame.image.load('assets/images/background.png').convert()
         self.board_image = pygame.image.load('assets/images/board.png').convert_alpha()
+        self.back_btn_image = pygame.image.load('assets/images/back_btn.png').convert_alpha()
 
         self.bubblees_images = {}
         for c in self.colors:
@@ -63,12 +64,12 @@ class GameView:
     def draw(self,game):
         self.screen.blit(self.bg_image,(0,0))
         self.screen.blit(self.board_image,(200,0))
-
         board = game.get_board()
         self.draw_sky(board.get_sky())
         self.draw_planet(board.get_planet())
         self.draw_score(game.get_score())
         self.draw_bag(board.get_bubblees_in_bag(),board.get_bag_color())
+        self.draw_buttons(game)
         pygame.display.update()
 
     def draw_score(self,score):
@@ -123,3 +124,7 @@ class GameView:
         if color in self.colors:
             x,y = cell.get_pos()
             self.screen.blit(self.bubblees_images[color],(x+6,y+5))
+
+    def draw_buttons(self,game):
+        back_btn = game.get_back_btn()
+        self.screen.blit(self.back_btn_image,back_btn["pos"])
