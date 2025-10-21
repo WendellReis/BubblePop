@@ -67,6 +67,13 @@ class Game:
     def record_state(self):
         self.history.append(self.get_state())
 
+    def next_state(self,act,data=None):
+        if data is None:
+            self.set_state(action.EXECUTE(self.get_state(),act))
+        else:
+            self.set_state(action.EXECUTE(self.get_state(),act,data))
+        self.record_state()
+
     def get_state(self):
         state = {}
         state["turn"] = self.turn
@@ -96,25 +103,21 @@ class Game:
     def setup_sky(self,event):
         if self.board.verify_setup_sky():
             if self.board.is_full_sky():
-                self.set_state(action.EXECUTE(self.get_state(),"SWAP_BUBBLESES"))
-                self.record_state()
+                self.next_state("NAVIGATE",[globals.STATE_SWAP_BUBBLEES,False])
                 return
 
             if self.board.get_bag_color() not in globals.COLORS:
-                self.set_state(action.EXECUTE(self.get_state(),"GENERATE_BUBBLEE",self.board.generate_color()))
-                self.record_state()
+                self.next_state("GENERATE_BUBBLEE",self.board.generate_color())
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if self.memory is None:
                     self.memory = self.board.get_sky_click(event,empty=True)
 
                     if self.memory is not None:
-                        new_state = action.EXECUTE(self.get_state(),"SETUP",self.memory)
-                        self.record_state()
-                        self.set_state(new_state)
+                        self.next_state("SETUP",self.memory)
+                        print(self.get_state())
                         self.memory = None
         else:
-            self.set_state(action.EXECUTE(self.get_state(),"CHECKWIN"))
-            self.record_state()
+            self.next_state("NAVIGATE",[globals.STATE_CHECK_WIN,False])
 
     def swap_bubblees(self,event):
         pass
