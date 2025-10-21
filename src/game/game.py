@@ -61,8 +61,17 @@ class Game:
             "rect": pygame.Rect(x,y,120,120)
         }
 
+        x,y = (1350,1300)
+        self.back_2_btn = {
+            "pos": (x,y),
+            "rect": pygame.Rect(x,y,120,120)
+        }
+
     def get_back_btn(self):
         return self.back_btn
+    
+    def get_back_2_btn(self):
+        return self.back_2_btn
     
     def record_state(self):
         self.history.append(self.get_state())
@@ -114,7 +123,6 @@ class Game:
 
                     if self.memory is not None:
                         self.next_state("SETUP",self.memory)
-                        print(self.get_state())
                         self.memory = None
         else:
             self.next_state("NAVIGATE",[globals.STATE_CHECK_WIN,False])
@@ -141,4 +149,15 @@ class Game:
         pass
 
     def update(self,event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            self.check_buttons(event)
         self.state_handlers[self.current_state](event)
+
+    def check_buttons(self,event):
+        if self.back_btn["rect"].collidepoint(event.pos) and len(self.history) > 1:
+            self.set_state(self.history[-2])
+            self.history.pop()
+        elif self.back_2_btn["rect"].collidepoint(event.pos) and len(self.history) > 2:
+            self.set_state(self.history[-3])
+            self.history.pop()
+            self.history.pop()

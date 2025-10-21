@@ -33,6 +33,7 @@ class GameView:
         self.bg_image = pygame.image.load('assets/images/background.png').convert()
         self.board_image = pygame.image.load('assets/images/board.png').convert_alpha()
         self.back_btn_image = pygame.image.load('assets/images/back_btn.png').convert_alpha()
+        self.back_2_btn_image = pygame.image.load('assets/images/back_2_btn.png').convert_alpha()
 
         self.bubblees_images = {}
         for c in self.colors:
@@ -126,5 +127,9 @@ class GameView:
             self.screen.blit(self.bubblees_images[color],(x+6,y+5))
 
     def draw_buttons(self,game):
-        back_btn = game.get_back_btn()
-        self.screen.blit(self.back_btn_image,back_btn["pos"])
+        if len(game.history) > 1:
+            back_btn = game.get_back_btn()
+            self.screen.blit(self.back_btn_image,back_btn["pos"])
+        if len(game.history) > 2:
+            back_2_btn = game.get_back_2_btn()
+            self.screen.blit(self.back_2_btn_image,back_2_btn["pos"])
