@@ -1,7 +1,8 @@
 # --- Variáveis de Estado ---
 STATE_SETUP_SKY = 0
-STATE_SWAP_BUBBLEES = 2
-STATE_DROP_BUBBLEES = 3
+STATE_SWAP_BUBBLEES = 1
+STATE_DROP_BUBBLEES = 2
+STATE_CHECK_MATCHES = 3
 STATE_USE_POWER = 4
 STATE_CHECK_WIN = 5
 STATE_ENDGAME = 6
@@ -19,4 +20,4 @@ ASCII = {
 }
 
 # --- Outras Variáveis ---
-COLORS = ['r','b','y','p','g','x']
+COLORS = list(ASCII.keys())

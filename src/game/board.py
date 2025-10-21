@@ -12,7 +12,7 @@ class Board:
         self.planet = [Planet(True),Planet()]
 
         self.sky = Sky()
-        if set_sky:
+        if not set_sky:
             self.sky.generate_sky()
         else:
             self.set_sky(sky)
@@ -50,10 +50,10 @@ class Board:
         return self.bubblees_in_bag >= self.sky.count_empty()
     
     def select_sky_cell(self,cell):
-        self.sky[cell[0]][cell[1]].select()
+        self.sky.matriz[cell[0]][cell[1]].select()
 
     def deselect_sky_cell(self,cell):
-        self.sky[cell[0]][cell[1]].deselect()
+        self.sky.matriz[cell[0]][cell[1]].deselect()
     
     def get_sky_click(self,event,empty=False):
         cell = self.sky.get_click(event.pos)
@@ -63,7 +63,7 @@ class Board:
         matriz = self.sky.get_matriz()
         if empty and matriz[cell[0]][cell[1]].get_color() not in globals.COLORS:
             return cell
-        if not empty and matriz[cell[0]][cell[1]] not in globals.COLORS:
+        if not empty and matriz[cell[0]][cell[1]].get_color() in globals.COLORS:
             return cell
         
         return None

@@ -1,8 +1,10 @@
 import pygame
 import globals
+from src.ui.debug import Debug
 
 class GameView:
     def __init__(self):
+        self.debug = Debug()
         self.font100 = pygame.font.SysFont(None,100)
         self.font80 = pygame.font.SysFont(None,80)
         self.colors = globals.COLORS
@@ -34,6 +36,8 @@ class GameView:
         self.board_image = pygame.image.load('assets/images/board.png').convert_alpha()
         self.back_btn_image = pygame.image.load('assets/images/back_btn.png').convert_alpha()
         self.back_2_btn_image = pygame.image.load('assets/images/back_2_btn.png').convert_alpha()
+        self.skip_sky_image = pygame.image.load('assets/images/skip_sky_btn.png').convert_alpha()
+        self.skip_sky_image = pygame.transform.scale(self.skip_sky_image,(150,80)).convert_alpha()
 
         self.bubblees_images = {}
         for c in self.colors:
@@ -71,6 +75,7 @@ class GameView:
         self.draw_score(game.get_score())
         self.draw_bag(board.get_bubblees_in_bag(),board.get_bag_color())
         self.draw_buttons(game)
+        self.debug.draw(self.screen,game)
         pygame.display.update()
 
     def draw_score(self,score):
@@ -127,6 +132,9 @@ class GameView:
             self.screen.blit(self.bubblees_images[color],(x+6,y+5))
 
     def draw_buttons(self,game):
+        if game.get_current_state() == globals.STATE_SWAP_BUBBLEES:
+            skip_btn = game.get_skip_btn()
+            self.screen.blit(self.skip_sky_image,skip_btn["pos"])
         if len(game.history) > 1:
             back_btn = game.get_back_btn()
             self.screen.blit(self.back_btn_image,back_btn["pos"])

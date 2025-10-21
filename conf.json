@@ -1,12 +1,12 @@
 {
-    "set_sky": false,
+    "set_sky": true,
     "current_state": 0,
     "turn": 0,
     "bubblees_in_bag":20,
     "bag_color": null,
     "sky": [
-        ["r","g","b","y",""],
-        ["x","x","x","x",""]
+        ["r","g"," ","y","r"],
+        ["x","x"," ","x","x"]
     ],
     "planet": [
         [

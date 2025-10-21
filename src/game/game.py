@@ -14,27 +14,19 @@ class Game:
         with open("conf.json", "r") as f:
             conf = json.load(f)
 
-        self.STATE_SETUP_SKY = globals.STATE_SETUP_SKY
-        self.STATE_SWAP_BUBBLEES = globals.STATE_SWAP_BUBBLEES
-        self.STATE_DROP_BUBBLEES = globals.STATE_DROP_BUBBLEES
-        self.STATE_USE_POWER = globals.STATE_USE_POWER
-        self.STATE_CHECK_WIN = globals.STATE_CHECK_WIN
-        self.STATE_ENDGAME = globals.STATE_ENDGAME
-        self.STATE_CHOOSE_POWER = globals.STATE_CHOOSE_POWER
-        self.STATE_VERIFY_POWER = globals.STATE_VERIFY_POWER
-
         self.state_handlers = {
-            self.STATE_SETUP_SKY: self.setup_sky,
-            self.STATE_SWAP_BUBBLEES: self.swap_bubblees,
-            self.STATE_DROP_BUBBLEES: self.drop_bubblees,
-            self.STATE_USE_POWER: self.use_power,
-            self.STATE_CHECK_WIN: self.check_win,
-            self.STATE_CHOOSE_POWER: self.choose_power,
-            self.STATE_VERIFY_POWER: self.verify_power,
-            self.STATE_ENDGAME: self.endgame
+            globals.STATE_SETUP_SKY: self.setup_sky,
+            globals.STATE_SWAP_BUBBLEES: self.swap_bubblees,
+            globals.STATE_DROP_BUBBLEES: self.drop_bubblees,
+            globals.STATE_USE_POWER: self.use_power,
+            globals.STATE_CHECK_WIN: self.check_win,
+            globals.STATE_CHOOSE_POWER: self.choose_power,
+            globals.STATE_VERIFY_POWER: self.verify_power,
+            globals.STATE_ENDGAME: self.endgame,
+            globals.STATE_CHECK_MATCHES: self.check_matches
         }
         
-        self.board = Board(conf["bubblees_in_bag"],conf["set_sky"],conf["sky"])
+        self.board = Board(conf["bubblees_in_bag"],set_sky=conf["set_sky"],sky=conf["sky"])
         self.current_state = conf["current_state"]
         self.turn = conf["turn"]
         self.board.set_planet(0,conf["planet"][0])
@@ -66,6 +58,21 @@ class Game:
             "pos": (x,y),
             "rect": pygame.Rect(x,y,120,120)
         }
+
+        x,y = (1183,1200)
+        self.skip_btn = {
+            "pos":(x,y),
+            "rect": pygame.Rect(x,y,150,80)
+        }
+
+    def get_turn(self):
+        return self.turn
+    
+    def get_current_state(self):
+        return self.current_state
+
+    def get_skip_btn(self):
+        return self.skip_btn
 
     def get_back_btn(self):
         return self.back_btn
@@ -112,9 +119,9 @@ class Game:
     def setup_sky(self,event):
         if self.board.verify_setup_sky():
             if self.board.is_full_sky():
-                self.next_state("NAVIGATE",[globals.STATE_SWAP_BUBBLEES,False])
+                self.next_state("NAVIGATE",globals.STATE_SWAP_BUBBLEES)
                 return
-
+            
             if self.board.get_bag_color() not in globals.COLORS:
                 self.next_state("GENERATE_BUBBLEE",self.board.generate_color())
             elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -125,12 +132,46 @@ class Game:
                         self.next_state("SETUP",self.memory)
                         self.memory = None
         else:
-            self.next_state("NAVIGATE",[globals.STATE_CHECK_WIN,False])
+            self.next_state("NAVIGATE",globals.STATE_CHECK_WIN)
 
     def swap_bubblees(self,event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.memory is None:
+                self.memory = self.board.get_sky_click(event)
 
+                if self.memory is not None:
+                    self.board.select_sky_cell(self.memory)
+            else:
+                cell = self.board.get_sky_click(event)
+                if cell is not None:
+                    if cell == self.memory:
+                        self.board.deselect_sky_cell(self.memory)
+                        self.memory = None
+                    elif self.adj(self.memory,cell):
+                        self.next_state("SWAP_BUBBLEES",[self.memory,cell])
+                        self.board.deselect_sky_cell(self.memory)
+                        self.memory = None
+                        
     def drop_bubblees(self,event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.memory is None:
+                self.memory = self.board.get_sky_click(event)
+
+                if self.memory is not None:
+                    self.board.select_sky_cell(self.memory)
+            else:
+                cell = self.board.get_sky_click(event)
+
+                if cell is not None:
+                    if cell == self.memory:
+                        self.board.deselect_sky_cell(self.memory)
+                        self.memory = None
+                    elif self.adj(self.memory,cell) and (cell[0] == self.turn or self.memory[0] == self.turn):
+                        self.next_state("DROP BUBBLEES",[self.memory,cell])
+                        self.board.deselect_sky_cell(self.memory)
+                        self.memory = None
+
+    def check_matches(self,event):
         pass
 
     def use_power(self,event):
@@ -161,3 +202,15 @@ class Game:
             self.set_state(self.history[-3])
             self.history.pop()
             self.history.pop()
+        elif self.current_state == globals.STATE_SWAP_BUBBLEES and self.skip_btn["rect"].collidepoint(event.pos):
+            self.next_state("NAVIGATE",globals.STATE_DROP_BUBBLEES)
+            if self.memory is not None:
+                self.board.deselect_sky_cell(self.memory)
+                self.memory = None
+
+    def adj(self,c1,c2):
+        if c1[0] == c2[0] and (c1[1] == c2[1]+1 or c2[1] == c1[1]+1):
+            return True
+        if c1[1] == c2[1] and (c1[0] == c2[0]+1 or c2[0] == c1[0]+1):
+            return True
+        return False
