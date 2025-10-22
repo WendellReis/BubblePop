@@ -67,20 +67,22 @@ class GameView:
         }
 
     def draw(self,game):
-        self.screen.blit(self.bg_image,(0,0))
-        self.screen.blit(self.board_image,(200,0))
-        board = game.get_board()
-        self.draw_sky(board.get_sky())
-        self.draw_planet(board.get_planet())
-        self.draw_score(game.get_score())
-        self.draw_bag(board.get_bubblees_in_bag(),board.get_bag_color())
-        self.draw_buttons(game)
-        self.debug.draw(self.screen,game)
-        pygame.display.update()
+        if game.get_dirty():
+            game.set_dirty(False)
+            self.screen.blit(self.bg_image,(0,0))
+            self.screen.blit(self.board_image,(200,0))
+            board = game.get_board()
+            self.draw_sky(board.get_sky())
+            self.draw_planet(board.get_planet())
+            self.draw_score(game.get_score())
+            self.draw_bag(board.get_bubblees_in_bag(),board.get_bag_color())
+            self.draw_buttons(game)
+            self.debug.draw(self.screen,game)
+            pygame.display.update()
 
     def draw_score(self,score):
         if score != self.cache["score"]:
-            self.cahce = score
+            self.cache["score"] = score
             self.render_text()
 
         self.screen.blit(self.rendered_text["score"][0],(90,120))

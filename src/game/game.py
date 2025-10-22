@@ -10,6 +10,9 @@ class Game:
     def __init__(self,seed=time.time()):
         random.seed(seed)
 
+        # Variável que indica se o estado atual deve ser desenhado
+        self.is_dirty = True
+
         conf = None
         with open("conf.json", "r") as f:
             conf = json.load(f)
@@ -83,11 +86,21 @@ class Game:
     def record_state(self):
         self.history.append(self.get_state())
 
+    def get_dirty(self):
+        return self.is_dirty
+    
+    def set_dirty(self,value):
+        if value:
+            self.is_dirty = True
+        else:
+            self.is_dirty = False
+
     def next_state(self,act,data=None):
         if data is None:
             self.set_state(action.EXECUTE(self.get_state(),act))
         else:
             self.set_state(action.EXECUTE(self.get_state(),act,data))
+        self.is_dirty = True
         self.record_state()
 
     def get_state(self):
@@ -141,16 +154,19 @@ class Game:
 
                 if self.memory is not None:
                     self.board.select_sky_cell(self.memory)
+                    self.is_dirty = True
             else:
                 cell = self.board.get_sky_click(event)
                 if cell is not None:
                     if cell == self.memory:
                         self.board.deselect_sky_cell(self.memory)
                         self.memory = None
+                        self.is_dirty = True
                     elif self.adj(self.memory,cell):
                         self.next_state("SWAP_BUBBLEES",[self.memory,cell])
                         self.board.deselect_sky_cell(self.memory)
                         self.memory = None
+                        self.is_dirty = True
                         
     def drop_bubblees(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -159,6 +175,7 @@ class Game:
 
                 if self.memory is not None:
                     self.board.select_sky_cell(self.memory)
+                    self.is_dirty = True
             else:
                 cell = self.board.get_sky_click(event)
 
@@ -166,9 +183,11 @@ class Game:
                     if cell == self.memory:
                         self.board.deselect_sky_cell(self.memory)
                         self.memory = None
+                        self.is_dirty = True
                     elif self.adj(self.memory,cell) and (cell[0] == self.turn or self.memory[0] == self.turn):
                         self.next_state("DROP BUBBLEES",[self.memory,cell])
                         self.board.deselect_sky_cell(self.memory)
+                        self.is_dirty = True
                         self.memory = None
 
     def check_matches(self,event):
@@ -206,6 +225,7 @@ class Game:
             self.next_state("NAVIGATE",globals.STATE_DROP_BUBBLEES)
             if self.memory is not None:
                 self.board.deselect_sky_cell(self.memory)
+                self.is_dirty = True
                 self.memory = None
 
     def adj(self,c1,c2):
