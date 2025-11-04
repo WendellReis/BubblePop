@@ -3,7 +3,7 @@ import globals
 
 class Debug:
     def __init__(self):
-        self.font80 = pygame.font.SysFont(None,80)
+        self.font = pygame.font.SysFont(None,50)
 
         self.turn = 0
         self.state = -1
@@ -28,14 +28,14 @@ class Debug:
                 
     def render(self,text,font=80):
         if font == 80:
-            return self.font80.render(text, True, (0, 0, 0))
+            return self.font.render(text, True, (0, 0, 0))
     
     def update(self,game):
         turn = game.get_turn()
         if turn != self.turn:
             self.turn = turn
-            self.TEXTS["turn"] = self.render(f"TurT,(1n: {turn}")
+            self.TEXTS["turn"] = self.render(f"Turn: {turn}")
 
     def draw(self,screen,game):
-        screen.blit(self.TEXTS["turn"],(1000,100))
-        screen.blit(self.TEXTS[game.get_current_state()],(1000,200))
+        screen.blit(self.TEXTS["turn"],(650,100))
+        screen.blit(self.TEXTS[game.get_current_state()],(650,150))

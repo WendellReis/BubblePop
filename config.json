@@ -1,6 +1,6 @@
 {
     "set_sky": true,
-    "current_state": 0,
+    "current_state": 1,
     "turn": 0,
     "bubblees_in_bag":20,
     "bag_color": null,
@@ -27,5 +27,7 @@
         ]
     ],
     "score": [0,0],
-    "power_stack": []
+    "power_stack": [],
+    "turn_power": -1,
+    "winner": -1
 }

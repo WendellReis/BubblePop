@@ -7,8 +7,8 @@ class Sky:
         self.colors = globals.COLORS
         self.matriz = [[],[]]
         for j in range(0,5):
-            self.matriz[0].append(Cell((177 + 39 + 130*j,int(1600/2) - 106)))
-            self.matriz[1].append(Cell((177 + 39 + 130*j,int(1600/2) + 14 )))
+            self.matriz[0].append(Cell((177 + 39 + 80*j,int(1000/2) - 80)))
+            self.matriz[1].append(Cell((177 + 39 + 80*j,int(1000/2))))
 
     def get_matriz(self):
         return self.matriz

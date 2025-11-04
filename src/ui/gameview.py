@@ -5,11 +5,11 @@ from src.ui.debug import Debug
 class GameView:
     def __init__(self):
         self.debug = Debug()
-        self.font100 = pygame.font.SysFont(None,100)
-        self.font80 = pygame.font.SysFont(None,80)
+        self.fontlarge = pygame.font.SysFont(None,80)
+        self.fontsmall = pygame.font.SysFont(None,60)
         self.colors = globals.COLORS
-        self.screen_width = 1600
-        self.screen_height = 1600
+        self.screen_width = 1000
+        self.screen_height = 1000
         self.board_width = 700
         self.board_margin = 200
 
@@ -32,12 +32,17 @@ class GameView:
         self.cell_selected_image = pygame.image.load('assets/images/cell.png').convert_alpha()     
         self.cell_invisible_image = pygame.image.load('assets/images/cell.png').convert_alpha()
         self.cell_invisible_image.set_alpha(0)
+        
         self.bg_image = pygame.image.load('assets/images/background.png').convert()
+        self.bg_image = pygame.transform.scale(self.bg_image,(self.screen_width,self.screen_height)).convert()
+        
         self.board_image = pygame.image.load('assets/images/board.png').convert_alpha()
+        self.board_image = pygame.transform.scale(self.board_image,(420,self.screen_height)).convert()
+
         self.back_btn_image = pygame.image.load('assets/images/back_btn.png').convert_alpha()
         self.back_2_btn_image = pygame.image.load('assets/images/back_2_btn.png').convert_alpha()
         self.skip_sky_image = pygame.image.load('assets/images/skip_sky_btn.png').convert_alpha()
-        self.skip_sky_image = pygame.transform.scale(self.skip_sky_image,(150,80)).convert_alpha()
+        self.skip_sky_image = pygame.transform.scale(self.skip_sky_image,(120,55)).convert_alpha()
 
         self.bubblees_images = {}
         for c in self.colors:
@@ -52,41 +57,39 @@ class GameView:
                 self.power_images[c] = img
 
         self.bag_image = pygame.image.load('assets/images/bag.png').convert_alpha()
-        self.bag_image = pygame.transform.scale(self.bag_image, (200, 200))
+        self.bag_image = pygame.transform.scale(self.bag_image, (140, 140)).convert_alpha()
 
         self.accept_icon = pygame.image.load('assets/images/accept.png').convert_alpha()
         self.reject_icon = pygame.image.load('assets/images/reject.png').convert_alpha()
 
     def render_text(self):
         self.rendered_text = {
-            "bubblees_in_bag": self.font80.render(str(self.cache["bubblees_in_bag"]), True, (255, 255, 255)),
+            "bubblees_in_bag": self.fontsmall.render(str(self.cache["bubblees_in_bag"]), True, (255, 255, 255)),
             "score":[
-                self.font100.render(str(self.cache["score"][0]), True, (0, 0, 0)),
-                self.font100.render(str(self.cache["score"][1]), True, (0, 0, 0))
+                self.fontlarge.render(str(self.cache["score"][0]), True, (0, 0, 0)),
+                self.fontlarge.render(str(self.cache["score"][1]), True, (0, 0, 0))
             ]
         }
 
     def draw(self,game):
-        if game.get_dirty():
-            game.set_dirty(False)
-            self.screen.blit(self.bg_image,(0,0))
-            self.screen.blit(self.board_image,(200,0))
-            board = game.get_board()
-            self.draw_sky(board.get_sky())
-            self.draw_planet(board.get_planet())
-            self.draw_score(game.get_score())
-            self.draw_bag(board.get_bubblees_in_bag(),board.get_bag_color())
-            self.draw_buttons(game)
-            self.debug.draw(self.screen,game)
-            pygame.display.update()
+        self.screen.blit(self.bg_image,(0,0))
+        self.screen.blit(self.board_image,(200,0))
+        board = game.get_board()
+        self.draw_sky(board.get_sky())
+        self.draw_planet(board.get_planet())
+        self.draw_score(game.get_score())
+        self.draw_bag(board.get_bubblees_in_bag(),board.get_bag_color())
+        self.draw_buttons(game)
+        self.debug.draw(self.screen,game)
+        pygame.display.update()
 
     def draw_score(self,score):
         if score != self.cache["score"]:
             self.cache["score"] = score
             self.render_text()
 
-        self.screen.blit(self.rendered_text["score"][0],(90,120))
-        self.screen.blit(self.rendered_text["score"][0],(90,1400))
+        self.screen.blit(self.rendered_text["score"][0],(90,80))
+        self.screen.blit(self.rendered_text["score"][0],(90,880))
 
     def draw_bag(self,value,color):
         if value != self.cache["bubblees_in_bag"]:
@@ -94,10 +97,10 @@ class GameView:
             self.render_text()
 
         if color in self.colors:
-            self.screen.blit(self.bubblees_images[color],(880,1150))
+            self.screen.blit(self.bubblees_images[color],(680,780))
 
-        self.screen.blit(self.bag_image,(920,1250))
-        self.screen.blit(self.rendered_text["bubblees_in_bag"],(1000,1330))
+        self.screen.blit(self.bag_image,(700,800))
+        self.screen.blit(self.rendered_text["bubblees_in_bag"],(750,850))
 
     def draw_cell(self,cell,transparence=False):
         if transparence:
@@ -131,7 +134,7 @@ class GameView:
         color = cell.get_color()
         if color in self.colors:
             x,y = cell.get_pos()
-            self.screen.blit(self.bubblees_images[color],(x+6,y+5))
+            self.screen.blit(self.bubblees_images[color],(x+4,y+4))
 
     def draw_buttons(self,game):
         if game.get_current_state() == globals.STATE_SWAP_BUBBLEES:

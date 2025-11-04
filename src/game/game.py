@@ -14,7 +14,7 @@ class Game:
         self.is_dirty = True
 
         conf = None
-        with open("conf.json", "r") as f:
+        with open("config.json", "r") as f:
             conf = json.load(f)
 
         self.state_handlers = {
@@ -36,6 +36,8 @@ class Game:
         self.board.set_planet(1,conf["planet"][1])
         self.score = conf["score"]
         self.power_stack = conf["power_stack"]
+        self.winner = conf["winner"]
+        self.turn_power = conf["turn_power"]
     
         self.memory = None
         self.history = [self.get_state()]
@@ -50,19 +52,19 @@ class Game:
         return self.score
     
     def load_buttons(self):
-        x,y = (1200,1300)
+        x,y = (880,850)
         self.back_btn = {
             "pos": (x,y),
             "rect": pygame.Rect(x,y,120,120)
         }
 
-        x,y = (1350,1300)
+        x,y = (880,760)
         self.back_2_btn = {
             "pos": (x,y),
             "rect": pygame.Rect(x,y,120,120)
         }
 
-        x,y = (1183,1200)
+        x,y = (853,700)
         self.skip_btn = {
             "pos":(x,y),
             "rect": pygame.Rect(x,y,150,80)
@@ -116,18 +118,32 @@ class Game:
         state["power_stack"] = self.power_stack
         state["bubblees_in_bag"] = self.board.get_bubblees_in_bag()
         state["bag_color"] = self.board.get_bag_color()
+        state["winner"] = self.winner
+        state["turn_power"] = self.turn_power
         return state
 
     def set_state(self,state):
-        self.turn = state["turn"]
-        self.current_state = state["current_state"]
-        self.board.set_planet(0,state["planet"][0])
-        self.board.set_planet(1,state["planet"][1])
-        self.board.set_sky(state["sky"])
-        self.score = state["score"]
-        self.power_stack = state["power_stack"]
-        self.board.set_bubblees_in_bag(state["bubblees_in_bag"])
-        self.board.set_bag_color(state["bag_color"])
+        self.turn = state.get("turn")
+        self.current_state = state.get("current_state")
+
+        # Planetas (garante que a lista exista e tenha os índices esperados)
+        planets = state.get("planet", [None, None])
+        self.board.set_planet(0, planets[0])
+        self.board.set_planet(1, planets[1])
+
+        # Céu (sky)
+        self.board.set_sky(state.get("sky"))
+
+        # Atributos básicos
+        self.score = state.get("score")
+        self.power_stack = state.get("power_stack")
+        self.winner = state.get("winner")
+        self.turn_power = state.get("turn_power")
+
+        # Itens da bolsa (bag)
+        self.board.set_bubblees_in_bag(state.get("bubblees_in_bag"))
+        self.board.set_bag_color(state.get("bag_color"))
+
 
     def setup_sky(self,event):
         if self.board.verify_setup_sky():
@@ -185,7 +201,7 @@ class Game:
                         self.memory = None
                         self.is_dirty = True
                     elif self.adj(self.memory,cell) and (cell[0] == self.turn or self.memory[0] == self.turn):
-                        self.next_state("DROP BUBBLEES",[self.memory,cell])
+                        self.next_state("DROP_BUBBLEES",[self.memory,cell])
                         self.board.deselect_sky_cell(self.memory)
                         self.is_dirty = True
                         self.memory = None
@@ -197,7 +213,7 @@ class Game:
         pass
 
     def check_win(self,event):
-        pass
+        self.next_state("CHECK_WIN")
 
     def choose_power(self,event):
         pass

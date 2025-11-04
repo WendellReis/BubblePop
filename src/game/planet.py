@@ -7,9 +7,9 @@ class Planet:
             self.matriz.append([])
             for j in range(0,5):
                 if top:
-                    self.matriz[i].append(Cell((177 + 39 + 130*j,110*i + 20)))
+                    self.matriz[i].append(Cell((177 + 36 + 80*j,80*i + 20)))
                 else:
-                    self.matriz[i].append(Cell((177 + 39 + 130*j,1600 - 110*i - 120)))
+                    self.matriz[i].append(Cell((177 + 36 + 80*j,1000 - 80*i - 97)))
 
     def set_planet(self,matriz):
         for i in range(0,6):

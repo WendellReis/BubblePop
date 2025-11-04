@@ -15,6 +15,8 @@ def EXECUTE(state,action,data=None):
         return SWAP_BUBBLESS(state,data)
     elif s == globals.STATE_DROP_BUBBLEES:
         return DROP_BUBBLEES(state,data)
+    elif action == "CHECK_WIN":
+        return CHECK_WIN(state)
     
     print("ERRO action.EXECUTE")
 
@@ -67,4 +69,34 @@ def DROP_BUBBLEES(state,data):
     
     state["current_state"] = globals.STATE_CHECK_MATCHES
     return state
+
+def CHECK_WIN(state):
+    for w in [0,1]:
+        planet = state.get('planet')[w]
+        for i in range[4,5]:
+            for j in range(5):
+                if planet[i][j] in globals.COLORS:
+                    state['winner'] = w
+                    state['current_state'] = globals.STATE_ENDGAME
+                    return state
+
+    if state.get('bubblees_in_bag') == 0:
+        s0 = state.get('score')[0]
+        s1 = state.get('score')[1]
+
+        if s0 > s1:
+            state['winner'] = 0
+        elif s1 > s0:
+            state['winner'] = 1
+        else:
+            state['winner'] = -1
+        state['current_state'] = globals.STATE_ENDGAME
+        return state
+    return state
+
     
+def CHECK_MATCHES(state):
+    if state.get('turn_power') == -1:
+        turn = state.get('turn')
+        p = state.get('planet')[turn]
+
