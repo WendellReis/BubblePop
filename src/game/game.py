@@ -72,18 +72,18 @@ class Game:
 
         self.power_buttons = []
         for i in range(5):
-            x,y = (670+180*(i%2),350+200*(int(i/2)))
+            x,y = (675+180*(i%2),350+200*(int(i/2)))
             self.power_buttons.append(
                 {
                     "accept": 
                     {
                         "pos": (x,y),
-                        "rect": pygame.Rect(x,y,50,50)
+                        "rect": pygame.Rect(x,y,45,45)
                     },
                     "reject":
                     {
                         "pos": (x+60,y),
-                        "rect": pygame.Rect(x+60,y,50,50)
+                        "rect": pygame.Rect(x+60,y,45,45)
                     }
                 }
             )

@@ -97,7 +97,7 @@ class GameView:
             buttons = game.get_power_buttons()
             for i in range(len(powers)):
                 x,y = buttons[i].get('accept').get('pos')
-                self.screen.blit(self.power_images[powers[i]],(x+5,y-110))
+                self.screen.blit(self.power_images[powers[i]],(x+2,y-110))
 
             if current_state == globals.STATE_CHOOSE_POWER:
                 for i in range(len(powers)):
