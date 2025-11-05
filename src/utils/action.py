@@ -17,6 +17,8 @@ def EXECUTE(state,action,data=None):
         return DROP_BUBBLEES(state,data)
     elif action == "CHECK_WIN":
         return CHECK_WIN(state)
+    elif action == "CHECK_MATCHES":
+        return CHECK_MATCHES(state)
     
     print("ERRO action.EXECUTE")
 
@@ -95,8 +97,76 @@ def CHECK_WIN(state):
     return state
 
     
+def dfs(p,color,i,j):
+    p[i][j] = ' '
+    points = 1
+
+    if i + 1 < 6 and p[i+1][j] == color:
+        points+=dfs(p,color,i+1,j)
+    if i - 1 >= 0 and p[i-1][j] == color:
+        points+=dfs(p,color,i-1,j)
+    if j + 1 < 5 and p[i][j+1] == color:
+        points+=dfs(p,color,i,j+1)
+    if j - 1 >= 0 and p[i][j-1] == color:
+        points+=dfs(p,color[j-1])
+    
+    return points
+
+def drop_free_bubblees(p):
+    res = False
+    for j in range(5):
+        i = 0
+
+        aux = True
+        while aux:
+            aux = False
+            for i in range(1,6):
+                if p[i][j] in globals.COLORS and p[i-1][j] not in globals.COLORS:
+                    p[i-1][j] = p[i][j]
+                    p[i][j] = ' '
+                    aux = True
+                    res = True
+    return res
+
 def CHECK_MATCHES(state):
     if state.get('turn_power') == -1:
         turn = state.get('turn')
         p = state.get('planet')[turn]
+        stack = []
+
+        while True:
+            for i in range(0,6):
+                for j in range(0,3):
+                    color = p[i][j]
+                    if color in globals.COLORS and color != 'x' and color == p[i][j+1] and color == p[i][j+2]:
+                        points = dfs(p,color,i,j)
+
+                        if points:
+                            state['score'][turn] += points
+                            stack.append(color)
+
+            for i in range(0,4):
+                for j in range(0,5):
+                    color = p[i][j]
+                    if color in globals.COLORS and color != 'x' and color == p[i+1][j] and color == p[i+2][j]:
+                        points = dfs(p,color,i,j)
+
+                        if points:
+                            state['score'][turn] += points
+                            stack.append(color)
+
+            if not drop_free_bubblees(p):
+                break
+        
+        if len(stack) != 0:
+            state['turn_power'] = turn
+            state['power_stack'].append([turn,stack])
+            state['current_state'] = globals.STATE_CHOOSE_POWER
+        else:
+            state['turn'] = (turn+1)%2
+            state['current_state'] = globals.STATE_SETUP_SKY
+    
+    return state                    
+
+        
 

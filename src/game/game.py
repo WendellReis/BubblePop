@@ -207,7 +207,7 @@ class Game:
                         self.memory = None
 
     def check_matches(self,event):
-        pass
+        self.next_state("CHECK_MATCHES")
 
     def use_power(self,event):
         pass

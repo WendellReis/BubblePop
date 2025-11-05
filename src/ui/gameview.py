@@ -89,7 +89,7 @@ class GameView:
             self.render_text()
 
         self.screen.blit(self.rendered_text["score"][0],(90,80))
-        self.screen.blit(self.rendered_text["score"][0],(90,880))
+        self.screen.blit(self.rendered_text["score"][1],(90,880))
 
     def draw_bag(self,value,color):
         if value != self.cache["bubblees_in_bag"]:
