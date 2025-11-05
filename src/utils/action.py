@@ -142,7 +142,8 @@ def CHECK_MATCHES(state):
 
                         if points:
                             state['score'][turn] += points
-                            stack.append(color)
+                            if color not in stack: # Não é possível despertar dois poderes de mesma cor
+                                stack.append(color)
 
             for i in range(0,4):
                 for j in range(0,5):
@@ -152,7 +153,8 @@ def CHECK_MATCHES(state):
 
                         if points:
                             state['score'][turn] += points
-                            stack.append(color)
+                            if color not in stack:
+                                stack.append(color)
 
             if not drop_free_bubblees(p):
                 break

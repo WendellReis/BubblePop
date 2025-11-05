@@ -70,8 +70,32 @@ class Game:
             "rect": pygame.Rect(x,y,150,80)
         }
 
+        self.power_buttons = []
+        for i in range(5):
+            x,y = (670+180*(i%2),350+200*(int(i/2)))
+            self.power_buttons.append(
+                {
+                    "accept": 
+                    {
+                        "pos": (x,y),
+                        "rect": pygame.Rect(x,y,50,50)
+                    },
+                    "reject":
+                    {
+                        "pos": (x+60,y),
+                        "rect": pygame.Rect(x+60,y,50,50)
+                    }
+                }
+            )
+
+    def get_power_buttons(self):
+        return self.power_buttons
+
     def get_turn(self):
         return self.turn
+    
+    def get_power_stack(self):
+        return self.power_stack
     
     def get_current_state(self):
         return self.current_state

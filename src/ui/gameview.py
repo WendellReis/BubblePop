@@ -53,7 +53,7 @@ class GameView:
         for c in self.colors:
             if c != 'x':
                 img = pygame.image.load(f'assets/images/power_{globals.ASCII[c]}.png').convert_alpha()
-                img = pygame.transform.scale(img, (180, 180))
+                img = pygame.transform.scale(img, (100, 100))
                 self.power_images[c] = img
 
         self.bag_image = pygame.image.load('assets/images/bag.png').convert_alpha()
@@ -80,8 +80,32 @@ class GameView:
         self.draw_score(game.get_score())
         self.draw_bag(board.get_bubblees_in_bag(),board.get_bag_color())
         self.draw_buttons(game)
+        self.draw_powers(game)
         self.debug.draw(self.screen,game)
         pygame.display.update()
+
+
+    def draw_powers(self,game):
+        current_state = game.get_current_state()
+        if current_state in [globals.STATE_CHOOSE_POWER,globals.STATE_USE_POWER]:
+            powers = game.get_power_stack()[-1][1]
+            print(powers)
+
+            if len(powers) == 0:
+                return
+            
+            buttons = game.get_power_buttons()
+            for i in range(len(powers)):
+                x,y = buttons[i].get('accept').get('pos')
+                self.screen.blit(self.power_images[powers[i]],(x+5,y-110))
+
+            if current_state == globals.STATE_CHOOSE_POWER:
+                for i in range(len(powers)):
+                    b_accept = buttons[i].get('accept')
+                    b_reject = buttons[i].get('reject')
+                    self.screen.blit(self.accept_icon,b_accept.get('pos'))
+                    self.screen.blit(self.reject_icon,b_reject.get('pos'))
+
 
     def draw_score(self,score):
         if score != self.cache["score"]:
