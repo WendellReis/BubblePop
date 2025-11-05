@@ -16,6 +16,8 @@ class Debug:
             globals.STATE_DROP_BUBBLEES: self.render('DROP BUBBLEES'),
             globals.STATE_CHECK_MATCHES: self.render('CHECK MATCHES'),
             globals.STATE_CHOOSE_POWER: self.render('CHOOSE POWER'),
+            globals.STATE_CHECK_WIN: self.render('CHECK WIN'),
+            globals.STATE_ENDGAME: self.render('ENDGAME'),
 
             globals.STATE_USE_POWER: {
                 'red': self.render('RED'),

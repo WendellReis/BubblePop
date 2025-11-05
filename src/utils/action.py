@@ -7,6 +7,10 @@ def EXECUTE(state,action,data=None):
     
     s = state["current_state"]
 
+    if action == "CHECK_WIN":
+        return CHECK_WIN(state)
+    elif action == "CHECK_MATCHES":
+        return CHECK_MATCHES(state)
     if s == globals.STATE_SETUP_SKY:
         if data is None:
             return SETUP_SKY(state,action)
@@ -15,10 +19,6 @@ def EXECUTE(state,action,data=None):
         return SWAP_BUBBLESS(state,data)
     elif s == globals.STATE_DROP_BUBBLEES:
         return DROP_BUBBLEES(state,data)
-    elif action == "CHECK_WIN":
-        return CHECK_WIN(state)
-    elif action == "CHECK_MATCHES":
-        return CHECK_MATCHES(state)
     
     print("ERRO action.EXECUTE")
 
@@ -75,10 +75,10 @@ def DROP_BUBBLEES(state,data):
 def CHECK_WIN(state):
     for w in [0,1]:
         planet = state.get('planet')[w]
-        for i in range[4,5]:
+        for i in range(4,5):
             for j in range(5):
                 if planet[i][j] in globals.COLORS:
-                    state['winner'] = w
+                    state['winner'] = (w+1)%2
                     state['current_state'] = globals.STATE_ENDGAME
                     return state
 
@@ -96,7 +96,6 @@ def CHECK_WIN(state):
         return state
     return state
 
-    
 def dfs(p,color,i,j):
     p[i][j] = ' '
     points = 1

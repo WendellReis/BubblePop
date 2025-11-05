@@ -161,7 +161,7 @@ class Game:
                         self.next_state("SETUP",self.memory)
                         self.memory = None
         else:
-            self.next_state("NAVIGATE",globals.STATE_CHECK_WIN)
+            self.next_state("CHECK_WIN")
 
     def swap_bubblees(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
