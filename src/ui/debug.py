@@ -18,14 +18,11 @@ class Debug:
             globals.STATE_CHOOSE_POWER: self.render('CHOOSE POWER'),
             globals.STATE_CHECK_WIN: self.render('CHECK WIN'),
             globals.STATE_ENDGAME: self.render('ENDGAME'),
-
-            globals.STATE_USE_POWER: {
-                'red': self.render('RED'),
-                'blue': self.render('BLUE'),
-                'purple': self.render('PURPLE'),
-                'green': self.render('GREEN'),
-                'yellow': self.render('YELLOW'),
-            }
+            globals.STATE_POWER_RED: self.render('POWER RED'),
+            globals.STATE_POWER_BLUE: self.render('POWER BLUE'),
+            globals.STATE_POWER_PURPLE: self.render('POWER PURPLE'),
+            globals.STATE_POWER_GREEN: self.render('POWER GREEN'),
+            globals.STATE_POWER_YELLOW: self.render('POWER YELLOW')
         }
                 
     def render(self,text,font=80):
@@ -40,4 +37,8 @@ class Debug:
 
     def draw(self,screen,game):
         screen.blit(self.TEXTS["turn"],(650,100))
-        screen.blit(self.TEXTS[game.get_current_state()],(650,150))
+        if game.get_current_state == globals.STATE_ENDGAME:
+            text = self.render(f"Vitoria do jogador {game.get_winner()}")
+            screen.blit(text,(650,150))
+        else:
+            screen.blit(self.TEXTS[game.get_current_state()],(650,150))

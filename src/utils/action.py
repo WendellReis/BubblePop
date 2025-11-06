@@ -63,11 +63,10 @@ def DROP_BUBBLEES(state,data):
     for x,y in data:
         color = sky[x][y]
         sky[x][y] = ''
-
-        x = 0
-        while x < 6 and planet[x][y] in globals.COLORS:
-            x+=1
-        planet[x][y] = color
+        x = 4
+        while x >= 0 and planet[x][y] not in globals.COLORS:
+            x-=1
+        planet[x+1][y] = color
     
     state["current_state"] = globals.STATE_CHECK_MATCHES
     return state
@@ -94,6 +93,8 @@ def CHECK_WIN(state):
             state['winner'] = -1
         state['current_state'] = globals.STATE_ENDGAME
         return state
+    
+    state['current_state'] = globals.STATE_SETUP_SKY
     return state
 
 def dfs(p,color,i,j):
@@ -126,6 +127,7 @@ def drop_free_bubblees(p):
                     aux = True
                     res = True
     return res
+
 
 def CHECK_MATCHES(state):
     if state.get('turn_power') == -1:
@@ -165,7 +167,7 @@ def CHECK_MATCHES(state):
             state['current_state'] = globals.STATE_CHOOSE_POWER
         else:
             state['turn'] = (turn+1)%2
-            state['current_state'] = globals.STATE_SETUP_SKY
+            state['current_state'] = globals.STATE_CHECK_WIN
     
     return state                    
 

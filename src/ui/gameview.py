@@ -87,9 +87,8 @@ class GameView:
 
     def draw_powers(self,game):
         current_state = game.get_current_state()
-        if current_state in [globals.STATE_CHOOSE_POWER,globals.STATE_USE_POWER]:
+        if len(game.get_power_stack()) > 0:
             powers = game.get_power_stack()[-1][1]
-            print(powers)
 
             if len(powers) == 0:
                 return

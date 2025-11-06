@@ -21,7 +21,11 @@ class Game:
             globals.STATE_SETUP_SKY: self.setup_sky,
             globals.STATE_SWAP_BUBBLEES: self.swap_bubblees,
             globals.STATE_DROP_BUBBLEES: self.drop_bubblees,
-            globals.STATE_USE_POWER: self.use_power,
+            globals.STATE_POWER_RED: self.power_red,
+            globals.STATE_POWER_BLUE: self.power_red,
+            globals.STATE_POWER_PURPLE: self.power_purple,
+            globals.STATE_POWER_GREEN: self.power_green,
+            globals.STATE_POWER_YELLOW: self.power_yellow,
             globals.STATE_CHECK_WIN: self.check_win,
             globals.STATE_CHOOSE_POWER: self.choose_power,
             globals.STATE_VERIFY_POWER: self.verify_power,
@@ -97,6 +101,9 @@ class Game:
     def get_power_stack(self):
         return self.power_stack
     
+    def get_winner(self):
+        return self.winner
+
     def get_current_state(self):
         return self.current_state
 
@@ -233,16 +240,28 @@ class Game:
     def check_matches(self,event):
         self.next_state("CHECK_MATCHES")
 
-    def use_power(self,event):
-        pass
-
     def check_win(self,event):
         self.next_state("CHECK_WIN")
+
+    def verify_power(self,event):
+        pass
 
     def choose_power(self,event):
         pass
 
-    def verify_power(self,event):
+    def power_red(self,event):
+        pass
+
+    def power_blue(self,event):
+        pass
+
+    def power_yellow(self,event):
+        pass
+
+    def power_purple(self,event):
+        pass
+
+    def power_green(self,event):
         pass
 
     def endgame(self,event):
