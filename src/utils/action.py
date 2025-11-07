@@ -11,6 +11,8 @@ def EXECUTE(state,action,data=None):
         return CHECK_WIN(state)
     elif action == "CHECK_MATCHES":
         return CHECK_MATCHES(state)
+    elif action == "ACCEPT_POWER":
+        return ACCEPT_POWER(state,data)
     if s == globals.STATE_SETUP_SKY:
         if data is None:
             return SETUP_SKY(state,action)
@@ -128,7 +130,6 @@ def drop_free_bubblees(p):
                     res = True
     return res
 
-
 def CHECK_MATCHES(state):
     if state.get('turn_power') == -1:
         turn = state.get('turn')
@@ -171,5 +172,40 @@ def CHECK_MATCHES(state):
     
     return state                    
 
-        
+def remove_power(state,power):
+    stack = state.get('power_stack')
+    stack[-1][1].remove(power)
 
+    if len(stack[-1][1]):
+        stack.pop()
+
+
+def ACCEPT_POWER(state,data):
+    if not verify_power(state,data):
+        remove_power(state,data)
+        stack = state.get('power_stack')
+
+    else:
+        state['current_state'] = globals.STATE_POWER_YELLOW
+        remove_power(state,data)
+
+    return state
+
+def REJECT_POWER(state,data):
+    pass
+
+def verify_power(state,data):
+    turn_power = state.get('power_stack')[-1][0]
+
+    if data == 'y':
+        return verify_yellow(state,turn_power)
+    
+    
+def verify_yellow(state,turn_power):
+    p = state.get('planet')[turn_power]
+
+    for i in range(0,4):
+        for j in range(0,5):
+            if p[i][j] in globals.COLORS:
+                return True
+    return False

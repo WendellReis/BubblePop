@@ -28,7 +28,6 @@ class Game:
             globals.STATE_POWER_YELLOW: self.power_yellow,
             globals.STATE_CHECK_WIN: self.check_win,
             globals.STATE_CHOOSE_POWER: self.choose_power,
-            globals.STATE_VERIFY_POWER: self.verify_power,
             globals.STATE_ENDGAME: self.endgame,
             globals.STATE_CHECK_MATCHES: self.check_matches
         }
@@ -175,7 +174,6 @@ class Game:
         self.board.set_bubblees_in_bag(state.get("bubblees_in_bag"))
         self.board.set_bag_color(state.get("bag_color"))
 
-
     def setup_sky(self,event):
         if self.board.verify_setup_sky():
             if self.board.is_full_sky():
@@ -243,11 +241,16 @@ class Game:
     def check_win(self,event):
         self.next_state("CHECK_WIN")
 
-    def verify_power(self,event):
-        pass
-
     def choose_power(self,event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            stack = self.power_stack[-1]
+            for i in range(len(stack[1])):
+                if self.power_buttons[i].get('accept').get('rect').collidepoint(event.pos):
+                    print(f'aceitou {stack[1][i]}')
+                    self.next_state("ACCEPT_POWER",stack[1][i])
+                elif self.power_buttons[i].get('reject').get('rect').collidepoint(event.pos):
+                    print(f'rejeitou {stack[1][i]}')
+
 
     def power_red(self,event):
         pass
