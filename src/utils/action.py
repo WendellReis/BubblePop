@@ -13,6 +13,8 @@ def EXECUTE(state,action,data=None):
         return CHECK_MATCHES(state)
     elif action == "ACCEPT_POWER":
         return ACCEPT_POWER(state,data)
+    elif action == "REJECT_POWER":
+        return REJECT_POWER(state,data)
     if s == globals.STATE_SETUP_SKY:
         if data is None:
             return SETUP_SKY(state,action)
@@ -175,32 +177,51 @@ def CHECK_MATCHES(state):
 def remove_power(state,power):
     stack = state.get('power_stack')
     stack[-1][1].remove(power)
-
-    if len(stack[-1][1]):
+    if len(stack[-1][1]) == 0:
         stack.pop()
-
-
+    
 def ACCEPT_POWER(state,data):
     if not verify_power(state,data):
         remove_power(state,data)
         stack = state.get('power_stack')
 
+        if len(stack) == 0:
+            state['turn_power'] = -1
+            state['current_state'] = globals.STATE_SETUP_SKY
+        
     else:
-        state['current_state'] = globals.STATE_POWER_YELLOW
+        navigate_to_power(state,data)
         remove_power(state,data)
 
     return state
 
+def navigate_to_power(state,power):
+    if power == 'y':
+        state['current_state'] = globals.STATE_POWER_YELLOW
+    elif power == 'r':
+        state['current_state'] = globals.STATE_POWER_RED
+    elif power == 'b':
+        state['current_state'] = globals.STATE_POWER_BLUE
+    elif power == 'g':
+        state['current_state'] = globals.STATE_POWER_GREEN
+    elif power == 'p':
+        state['current_state'] = globals.STATE_POWER_PURPLE
+
 def REJECT_POWER(state,data):
-    pass
+    remove_power(state,data)
+
+    if len(state.get('power_stack')) == 0:
+        state['current_turn'] = globals.STATE_CHECK_WIN
+        state['turn'] = (state.get('turn')+1)%2
+
+    return state
 
 def verify_power(state,data):
     turn_power = state.get('power_stack')[-1][0]
 
     if data == 'y':
         return verify_yellow(state,turn_power)
-    
-    
+       
 def verify_yellow(state,turn_power):
     p = state.get('planet')[turn_power]
 
@@ -209,3 +230,15 @@ def verify_yellow(state,turn_power):
             if p[i][j] in globals.COLORS:
                 return True
     return False
+
+def verify_red(state,turn_power):
+    pass
+
+def verify_blue(state,turn_power):
+    pass
+
+def verify_green(state,turn_power):
+    pass
+
+def verify_purple(state,turn_power):
+    pass

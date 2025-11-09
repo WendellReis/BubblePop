@@ -100,6 +100,9 @@ class Game:
     def get_power_stack(self):
         return self.power_stack
     
+    def get_turn_power(self):
+        return self.turn_power
+
     def get_winner(self):
         return self.winner
 
@@ -246,10 +249,9 @@ class Game:
             stack = self.power_stack[-1]
             for i in range(len(stack[1])):
                 if self.power_buttons[i].get('accept').get('rect').collidepoint(event.pos):
-                    print(f'aceitou {stack[1][i]}')
                     self.next_state("ACCEPT_POWER",stack[1][i])
                 elif self.power_buttons[i].get('reject').get('rect').collidepoint(event.pos):
-                    print(f'rejeitou {stack[1][i]}')
+                    self.next_state("REJECT_POWER",stack[1][i])
 
 
     def power_red(self,event):
