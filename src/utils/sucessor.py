@@ -1,3 +1,4 @@
-class Sucessor:
-    def __init__(self):
-        pass
+import globals
+
+def GET(state):
+    pass

@@ -8,9 +8,9 @@ class Planet:
             self.matriz.append([])
             for j in range(0,5):
                 if top:
-                    self.matriz[i].append(Cell((177 + 36 + 80*j,80*i + 20)))
+                    self.matriz[i].append(Cell((212 + 80*j,80*i + 20)))
                 else:
-                    self.matriz[i].append(Cell((177 + 36 + 80*j,1000 - 80*i - 97)))
+                    self.matriz[i].append(Cell((212 + 80*j,1000 - 80*i - 97)))
 
     def set_planet(self,matriz):
         for i in range(0,6):
@@ -61,3 +61,11 @@ class Planet:
             i+=1
         return True
 
+    def full_column(self,c):
+        return self.matriz[3][c].get_color() in globals.COLORS
+    
+    def all_columns_full(self):
+        for j in range(5):
+            if not self.full_column(j):
+                return False
+        return True
