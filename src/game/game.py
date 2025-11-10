@@ -284,7 +284,6 @@ class Game:
             self.memory = self.board.get_sky_click(event)
 
             if self.memory is not None and self.memory[0] == (self.turn_power+1)%2:
-                
                 p = self.board.planet[(self.turn_power+1)%2]
 
                 if p.all_columns_full() or not p.full_column(self.memory[1]):

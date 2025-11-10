@@ -1,6 +1,7 @@
 import pygame
 from src.game.game import Game
 from src.ui.gameview import GameView
+import src.utils.sucessor as sucessor
 from src.utils.gamestatemanager import GameStateManager
 
 if __name__ == '__main__':
@@ -17,9 +18,10 @@ if __name__ == '__main__':
                 running = False
                 break
             else:
-                game.update(event)
                 if game.get_dirty():
+                    print(sucessor.GET(game.get_state()))
                     view.draw(game)
-                    game.set_dirty(False)    
+                    game.set_dirty(False)   
+                game.update(event) 
         clock.tick(60)
     pygame.quit()
