@@ -56,7 +56,8 @@ class Planet:
 
         i+=1
         while i < 6:
-            if self.matriz[i][j].get_color() not in globals.COLORS:
-                return True
-        return False
+            if self.matriz[i][j].get_color() in globals.COLORS:
+                return False
+            i+=1
+        return True
 
