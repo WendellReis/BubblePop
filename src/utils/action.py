@@ -19,6 +19,8 @@ def EXECUTE(state,action,data=None):
         return POWER_YELLOW(state,data)
     elif action == "POWER_RED":
         return POWER_RED(state,data)
+    elif action == "POWER_GREEN":
+        return POWER_GREEN(state,data)
     if s == globals.STATE_SETUP_SKY:
         if data is None:
             return SETUP_SKY(state,action)
@@ -223,6 +225,7 @@ def REJECT_POWER(state,data):
     remove_power(state,data)
 
     if len(state.get('power_stack')) == 0:
+        state['turn_power'] = -1
         state['current_turn'] = globals.STATE_CHECK_WIN
         state['turn'] = (state.get('turn')+1)%2
 
@@ -270,7 +273,7 @@ def verify_blue(state,turn_power):
     pass
 
 def verify_green(state,turn_power):
-    pass
+    return verify_red(state,(turn_power+1)%2)
 
 def verify_purple(state,turn_power):
     pass
@@ -291,6 +294,17 @@ def POWER_YELLOW(state,data):
 
 def POWER_RED(state,data):
     p = state.get('planet')[(state.get('turn_power')+1)%2]
+
+    c1,c2 = data
+    aux = p[c1[0]][c1[1]]
+    p[c1[0]][c1[1]] = p[c2[0]][c2[1]]
+    p[c2[0]][c2[1]] = aux
+
+    state['current_state'] = globals.STATE_CHECK_MATCHES
+    return state
+
+def POWER_GREEN(state,data):
+    p = state.get('planet')[state.get('turn_power')]
 
     c1,c2 = data
     aux = p[c1[0]][c1[1]]

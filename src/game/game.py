@@ -267,7 +267,7 @@ class Game:
             else:
                 cell = planet.get_cell_click(event)
 
-                if cell is not None:
+                if cell is not None and planet.get_cell_color(cell) in globals.COLORS:
                     if cell == self.memory:
                         i,j = self.memory
                         planet.matriz[i][j].deselect()
@@ -295,7 +295,30 @@ class Game:
         pass
 
     def power_green(self,event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            planet = self.board.planet[self.turn]
+
+            if self.memory is None:
+                self.memory = planet.get_cell_click(event)
+                if self.memory is not None:
+                    if planet.get_cell_color(self.memory) in globals.COLORS:
+                        i,j = self.memory
+                        planet.matriz[i][j].select()
+                        self.set_dirty(True)
+            else:
+                cell = planet.get_cell_click(event)
+
+                if cell is not None and planet.get_cell_color(cell) in globals.COLORS:
+                    if cell == self.memory:
+                        i,j = self.memory
+                        planet.matriz[i][j].deselect()
+                        self.set_dirty(True)
+                        self.memory = None
+                    elif self.adj(self.memory,cell):
+                        i,j = self.memory
+                        planet.matriz[i][j].deselect()
+                        self.next_state("POWER_GREEN",[self.memory,cell])
+                        self.memory = None
 
     def endgame(self,event):
         pass
