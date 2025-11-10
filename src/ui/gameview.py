@@ -107,9 +107,8 @@ class GameView:
 
 
     def draw_score(self,score):
-        if score != self.cache["score"]:
-            self.cache["score"] = score
-            self.render_text()
+        self.cache["score"] = score
+        self.render_text()
 
         self.screen.blit(self.rendered_text["score"][0],(90,80))
         self.screen.blit(self.rendered_text["score"][1],(90,880))
@@ -152,6 +151,7 @@ class GameView:
                 c2 = planet[1].matriz[i][j]
                 self.draw_cell(c1,transparence)
                 self.draw_cell(c2,transparence)
+
   
     def draw_bubblee(self,cell):
         color = cell.get_color()

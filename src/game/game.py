@@ -253,15 +253,43 @@ class Game:
                 elif self.power_buttons[i].get('reject').get('rect').collidepoint(event.pos):
                     self.next_state("REJECT_POWER",stack[1][i])
 
-
     def power_red(self,event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            planet = self.board.planet[(self.turn+1)%2]
+
+            if self.memory is None:
+                self.memory = planet.get_cell_click(event)
+                if self.memory is not None:
+                    if planet.get_cell_color(self.memory) in globals.COLORS:
+                        i,j = self.memory
+                        planet.matriz[i][j].select()
+                        self.set_dirty(True)
+            else:
+                cell = planet.get_cell_click(event)
+
+                if cell is not None:
+                    if cell == self.memory:
+                        i,j = self.memory
+                        planet.matriz[i][j].deselect()
+                        self.set_dirty(True)
+                        self.memory = None
+                    elif self.adj(self.memory,cell):
+                        i,j = self.memory
+                        planet.matriz[i][j].deselect()
+                        self.next_state("POWER_RED",[self.memory,cell])
+                        self.memory = None
 
     def power_blue(self,event):
         pass
 
     def power_yellow(self,event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            planet = self.board.planet[self.turn]
+            self.memory = planet.get_cell_click(event)
+            if self.memory is not None:
+                if planet.get_cell_color(self.memory) in globals.COLORS:
+                    self.next_state("POWER_YELLOW",self.memory)
+                    self.memory = None
 
     def power_purple(self,event):
         pass

@@ -1,4 +1,5 @@
 from src.game.cell import Cell
+import globals
 
 class Planet:
     def __init__(self,top = False):
@@ -23,3 +24,26 @@ class Planet:
             for j in range(0,5):
                 m[i].append(self.matriz[i][j].get_color())
         return m
+    
+    def get_cell_click(self,event):
+        for i in range(0,4):
+            for j in range(0,5):
+                if self.matriz[i][j].rect.collidepoint(event.pos):
+                    return [i,j]
+        return None
+    
+    def get_cell_color(self,cell):
+        return self.matriz[cell[0]][cell[1]].get_color()
+    
+    def select_all(self,op=1):
+        if op == 1:
+            for i in range(0,6):
+                for j in range(0,5):
+                    if self.matriz[i][j].get_color() in globals.COLORS:
+                        self.matriz[i][j].select()
+
+        else:
+            for i in range(0,6):
+                for j in range(0,5):
+                    if self.matriz[i][j].get_color() in globals.COLORS:
+                        self.matriz[i][j].deselect()

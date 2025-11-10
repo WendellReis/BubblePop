@@ -15,6 +15,10 @@ def EXECUTE(state,action,data=None):
         return ACCEPT_POWER(state,data)
     elif action == "REJECT_POWER":
         return REJECT_POWER(state,data)
+    elif action == "POWER_YELLOW":
+        return POWER_YELLOW(state,data)
+    elif action == "POWER_RED":
+        return POWER_RED(state,data)
     if s == globals.STATE_SETUP_SKY:
         if data is None:
             return SETUP_SKY(state,action)
@@ -98,7 +102,12 @@ def CHECK_WIN(state):
         state['current_state'] = globals.STATE_ENDGAME
         return state
     
-    state['current_state'] = globals.STATE_SETUP_SKY
+    if len(state.get('power_stack')) == 0:
+        state['current_state'] = globals.STATE_SETUP_SKY
+        state['turn_power'] = -1
+        state['turn'] = (state.get('turn')+1)%2
+    else:
+        state['current_state'] = globals.STATE_CHOOSE_POWER
     return state
 
 def dfs(p,color,i,j):
@@ -133,45 +142,48 @@ def drop_free_bubblees(p):
     return res
 
 def CHECK_MATCHES(state):
-    if state.get('turn_power') == -1:
+    if state.get('turn_power') == -1 or state.get('current_state') in [globals.STATE_POWER_GREEN, globals.STATE_POWER_YELLOW]:
         turn = state.get('turn')
-        p = state.get('planet')[turn]
-        stack = []
+    else:
+        turn = (state.get('turn')+1)%2
 
-        while True:
-            for i in range(0,6):
-                for j in range(0,3):
-                    color = p[i][j]
-                    if color in globals.COLORS and color != 'x' and color == p[i][j+1] and color == p[i][j+2]:
-                        points = dfs(p,color,i,j)
+    p = state.get('planet')[turn]
+    stack = []
 
-                        if points:
-                            state['score'][turn] += points
-                            if color not in stack: # Não é possível despertar dois poderes de mesma cor
-                                stack.append(color)
+    while True:
+        for i in range(0,6):
+            for j in range(0,3):
+                color = p[i][j]
+                if color in globals.COLORS and color != 'x' and color == p[i][j+1] and color == p[i][j+2]:
+                    points = dfs(p,color,i,j)
 
-            for i in range(0,4):
-                for j in range(0,5):
-                    color = p[i][j]
-                    if color in globals.COLORS and color != 'x' and color == p[i+1][j] and color == p[i+2][j]:
-                        points = dfs(p,color,i,j)
+                    if points:
+                        state['score'][turn] += points
+                        if color not in stack: # Não é possível despertar dois poderes de mesma cor
+                            stack.append(color)
 
-                        if points:
-                            state['score'][turn] += points
-                            if color not in stack:
-                                stack.append(color)
+        for i in range(0,4):
+            for j in range(0,5):
+                color = p[i][j]
+                if color in globals.COLORS and color != 'x' and color == p[i+1][j] and color == p[i+2][j]:
+                    points = dfs(p,color,i,j)
 
-            if not drop_free_bubblees(p):
-                break
-        
-        if len(stack) != 0:
-            state['turn_power'] = turn
-            state['power_stack'].append([turn,stack])
-            state['current_state'] = globals.STATE_CHOOSE_POWER
-        else:
-            state['turn'] = (turn+1)%2
-            state['current_state'] = globals.STATE_CHECK_WIN
+                    if points:
+                        state['score'][turn] += points
+                        if color not in stack:
+                            stack.append(color)
+
+        if not drop_free_bubblees(p):
+            break
     
+    if len(stack) != 0:
+        state['turn_power'] = turn
+        state['power_stack'].append([turn,stack])
+        state['current_state'] = globals.STATE_CHOOSE_POWER
+    else:
+        state['turn'] = (turn+1)%2
+        state['current_state'] = globals.STATE_CHECK_WIN
+
     return state                    
 
 def remove_power(state,power):
@@ -221,6 +233,14 @@ def verify_power(state,data):
 
     if data == 'y':
         return verify_yellow(state,turn_power)
+    if data == 'r':
+        return verify_red(state,turn_power)
+    if data == 'g':
+        return verify_green(state,turn_power)
+    if data == 'p':
+        return verify_purple(state,turn_power)
+    if data == 'b':
+        return verify_blue(state,turn_power)
        
 def verify_yellow(state,turn_power):
     p = state.get('planet')[turn_power]
@@ -232,7 +252,19 @@ def verify_yellow(state,turn_power):
     return False
 
 def verify_red(state,turn_power):
-    pass
+    p = state.get('planet')[(turn_power+1)%2]
+
+    for i in range(0,3):
+        for j in range(0,5):
+            if p[i][j] in globals.COLORS and p[i+1][j] in globals.COLORS:
+                return True
+    
+    for i in range(0,4):
+        for j in range(0,4):
+            if p[i][j] in globals.COLORS and p[i][j+1] in globals.COLORS:
+                return True
+
+    return False
 
 def verify_blue(state,turn_power):
     pass
@@ -242,3 +274,28 @@ def verify_green(state,turn_power):
 
 def verify_purple(state,turn_power):
     pass
+
+def POWER_YELLOW(state,data):
+    turn_power = state.get('turn_power')
+    p = state.get('planet')[turn_power]
+
+    state['score'][turn_power]+=1
+    p[data[0]][data[1]] = ' '
+    drop_free_bubblees(p)
+
+    if len(state.get('power_stack')) == 0:
+        state['turn_power'] = -1
+    
+    state['current_state'] = globals.STATE_CHECK_WIN
+    return state
+
+def POWER_RED(state,data):
+    p = state.get('planet')[(state.get('turn_power')+1)%2]
+
+    c1,c2 = data
+    aux = p[c1[0]][c1[1]]
+    p[c1[0]][c1[1]] = p[c2[0]][c2[1]]
+    p[c2[0]][c2[1]] = aux
+
+    state['current_state'] = globals.STATE_CHECK_MATCHES
+    return state
