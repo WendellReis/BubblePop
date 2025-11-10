@@ -18,10 +18,10 @@ if __name__ == '__main__':
                 running = False
                 break
             else:
+                game.update(event)
                 if game.get_dirty():
                     print(sucessor.GET(game.get_state()))
                     view.draw(game)
-                    game.set_dirty(False)   
-                game.update(event) 
+                    game.set_dirty(False)  
         clock.tick(60)
     pygame.quit()

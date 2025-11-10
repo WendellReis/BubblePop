@@ -290,7 +290,6 @@ class Game:
                     self.next_state("POWER_BLUE",self.memory)
                 self.memory = None
                     
-
     def power_yellow(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             planet = self.board.planet[self.turn_power]
@@ -310,8 +309,7 @@ class Game:
                 p_rival = self.board.planet[(self.turn_power+1)%2]
                 if p_rival.all_columns_full() or not p_rival.full_column(self.memory[1]):
                     self.next_state("POWER_PURPLE",self.memory)
-                self.memory = None
-                
+                self.memory = None                
 
     def power_green(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
