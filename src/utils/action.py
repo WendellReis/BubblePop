@@ -23,6 +23,8 @@ def EXECUTE(state,action,data=None):
         return POWER_GREEN(state,data)
     elif action == "POWER_PURPLE":
         return POWER_PURPLE(state,data)
+    elif action == "POWER_BLUE":
+        return POWER_BLUE(state,data)
     if s == globals.STATE_SETUP_SKY:
         if data is None:
             return SETUP_SKY(state,action)
@@ -272,7 +274,30 @@ def verify_red(state,turn_power):
     return False
 
 def verify_blue(state,turn_power):
-    pass
+    empty = True
+    sky = state.get('sky')
+    for j in range(5):
+        if sky[(turn_power+1)%2][j] in globals.COLORS:
+            empty = False
+
+    if empty:
+        return False
+
+    full = True
+    p = state.get('planet')[(turn_power+1)%2]
+    for j in range(5):
+        if p[3][j] not in globals.COLORS:
+            full = False
+            break
+
+    if full:
+        return True
+    
+    for j in range(5):
+        if sky[(turn_power+1)%2][j] in globals.COLORS and p[3][j] not in globals.COLORS:
+            return True
+
+    return False
 
 def verify_green(state,turn_power):
     return verify_red(state,(turn_power+1)%2)
@@ -349,4 +374,24 @@ def POWER_PURPLE(state,data):
     
     p[i+1][y] = color
     state['current_state'] = globals.STATE_CHECK_WIN
+    return state
+
+def POWER_BLUE(state,data):
+    turn_power = state.get('turn_power')
+    x,y = data
+    sky = state.get('sky')
+    color = sky[x][y]
+    sky[x][y] = ' '
+
+    p = state.get('planet')[(turn_power+1)%2]
+    if p[3][y] in globals.COLORS:
+        state['current_state'] = globals.STATE_ENDGAME
+        state['winner'] = turn_power
+
+    x = 3
+    while x >= 0 and p[x][y] not in globals.COLORS:
+        x-=1
+
+    p[x+1][y] = color
+    state['current_state'] = globals.STATE_CHECK_MATCHES
     return state

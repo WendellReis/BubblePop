@@ -22,7 +22,7 @@ class Game:
             globals.STATE_SWAP_BUBBLEES: self.swap_bubblees,
             globals.STATE_DROP_BUBBLEES: self.drop_bubblees,
             globals.STATE_POWER_RED: self.power_red,
-            globals.STATE_POWER_BLUE: self.power_red,
+            globals.STATE_POWER_BLUE: self.power_blue,
             globals.STATE_POWER_PURPLE: self.power_purple,
             globals.STATE_POWER_GREEN: self.power_green,
             globals.STATE_POWER_YELLOW: self.power_yellow,
@@ -280,7 +280,17 @@ class Game:
                         self.next_state("POWER_RED",[self.memory,cell])
 
     def power_blue(self,event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            self.memory = self.board.get_sky_click(event)
+
+            if self.memory is not None and self.memory[0] == (self.turn_power+1)%2:
+                
+                p = self.board.planet[(self.turn_power+1)%2]
+
+                if p.all_columns_full() or not p.full_column(self.memory[1]):
+                    self.next_state("POWER_BLUE",self.memory)
+                self.memory = None
+                    
 
     def power_yellow(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
