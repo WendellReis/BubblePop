@@ -136,6 +136,7 @@ class Game:
         else:
             self.set_state(action.EXECUTE(self.get_state(),act,data))
         self.is_dirty = True
+        self.memory = None
         self.record_state()
 
     def get_state(self):
@@ -255,7 +256,7 @@ class Game:
 
     def power_red(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            planet = self.board.planet[(self.turn+1)%2]
+            planet = self.board.planet[(self.turn_power+1)%2]
 
             if self.memory is None:
                 self.memory = planet.get_cell_click(event)
@@ -277,26 +278,30 @@ class Game:
                         i,j = self.memory
                         planet.matriz[i][j].deselect()
                         self.next_state("POWER_RED",[self.memory,cell])
-                        self.memory = None
 
     def power_blue(self,event):
         pass
 
     def power_yellow(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            planet = self.board.planet[self.turn]
+            planet = self.board.planet[self.turn_power]
             self.memory = planet.get_cell_click(event)
             if self.memory is not None:
-                if planet.get_cell_color(self.memory) in globals.COLORS:
+                if planet.get_cell_color(self.memory) in globals.COLORS and planet.is_free_bubble(self.memory):
                     self.next_state("POWER_YELLOW",self.memory)
-                    self.memory = None
 
     def power_purple(self,event):
-        pass
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            planet = self.board.planet[self.turn_power]
+
+            self.memory = planet.get_cell_click(event)
+
+            if self.memory is not None and planet.is_free_bubble(self.memory):
+                self.next_state("POWER_PURPLE",self.memory)
 
     def power_green(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            planet = self.board.planet[self.turn]
+            planet = self.board.planet[self.turn_power]
 
             if self.memory is None:
                 self.memory = planet.get_cell_click(event)
@@ -318,7 +323,6 @@ class Game:
                         i,j = self.memory
                         planet.matriz[i][j].deselect()
                         self.next_state("POWER_GREEN",[self.memory,cell])
-                        self.memory = None
 
     def endgame(self,event):
         pass

@@ -21,6 +21,8 @@ def EXECUTE(state,action,data=None):
         return POWER_RED(state,data)
     elif action == "POWER_GREEN":
         return POWER_GREEN(state,data)
+    elif action == "POWER_PURPLE":
+        return POWER_PURPLE(state,data)
     if s == globals.STATE_SETUP_SKY:
         if data is None:
             return SETUP_SKY(state,action)
@@ -257,12 +259,12 @@ def verify_yellow(state,turn_power):
 def verify_red(state,turn_power):
     p = state.get('planet')[(turn_power+1)%2]
 
-    for i in range(0,3):
+    for i in range(0,5):
         for j in range(0,5):
             if p[i][j] in globals.COLORS and p[i+1][j] in globals.COLORS:
                 return True
     
-    for i in range(0,4):
+    for i in range(0,6):
         for j in range(0,4):
             if p[i][j] in globals.COLORS and p[i][j+1] in globals.COLORS:
                 return True
@@ -275,8 +277,26 @@ def verify_blue(state,turn_power):
 def verify_green(state,turn_power):
     return verify_red(state,(turn_power+1)%2)
 
+def is_free_bubble(p,pos):
+        i,j = pos
+
+        if p[i][j] not in globals.COLORS:
+            return False
+
+        i+=1
+        while i < 6:
+            if p[i][j] not in globals.COLORS:
+                return True
+        return False
+
 def verify_purple(state,turn_power):
-    pass
+    p = state.get('planet')[turn_power]
+
+    for i in range(6):
+        for j in range(5):
+            if is_free_bubble(p,(i,j)):
+                return True
+    return False
 
 def POWER_YELLOW(state,data):
     turn_power = state.get('turn_power')
@@ -312,4 +332,21 @@ def POWER_GREEN(state,data):
     p[c2[0]][c2[1]] = aux
 
     state['current_state'] = globals.STATE_CHECK_MATCHES
+    return state
+
+def POWER_PURPLE(state,data):
+    turn_power = state.get('turn_power')
+
+    x,y = data
+    color = state.get('planet')[turn_power][x][y]
+    state.get('planet')[turn_power][x][y] = ' '
+
+    p = state.get('planet')[(turn_power+1)%2]
+
+    i = 5
+    while i >= 0 and p[i][y] not in globals.COLORS:
+        i-=1
+    
+    p[i+1][y] = color
+    state['current_state'] = globals.STATE_CHECK_WIN
     return state

@@ -47,3 +47,16 @@ class Planet:
                 for j in range(0,5):
                     if self.matriz[i][j].get_color() in globals.COLORS:
                         self.matriz[i][j].deselect()
+
+    def is_free_bubble(self,pos):
+        i,j = pos
+
+        if self.matriz[i][j].get_color() not in globals.COLORS:
+            return False
+
+        i+=1
+        while i < 6:
+            if self.matriz[i][j].get_color() not in globals.COLORS:
+                return True
+        return False
+
