@@ -301,11 +301,8 @@ class Game:
     def power_purple(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             planet = self.board.planet[self.turn_power]
-
             self.memory = planet.get_cell_click(event)
-
             if self.memory is not None and planet.is_free_bubble(self.memory):
-                print(f'mem = {self.memory}')
                 p_rival = self.board.planet[(self.turn_power+1)%2]
                 if p_rival.all_columns_full() or not p_rival.full_column(self.memory[1]):
                     self.next_state("POWER_PURPLE",self.memory)

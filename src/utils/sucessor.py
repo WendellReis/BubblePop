@@ -156,8 +156,35 @@ def power_blue(state):
     
     return actions
 
+def is_free_bubblee(p,i,j):
+    if p[i][j] not in globals.COLORS:
+        return False
+    i+=1
+    while i < 6:
+        if p[i][j] in globals.COLORS:
+            return False
+        i+=1
+    return True
+
 def power_purple(state):
     actions = []
+    
+    turn_power = state.get('turn_power')
+    p1 = state.get('planet')[turn_power]
+    p2 = state.get('planet')[(turn_power+1)%2]
+
+    full = True
+    col = len(p2[0])
+    for j in range(col):
+        if p2[3][j] not in globals.COLORS:
+            full=False
+            break
+    print(full)
+    rows = len(p1)
+    for i in range(rows):
+        for j in range(col):
+            if is_free_bubblee(p1,i,j) and (full or p2[3][j] not in globals.COLORS): 
+                actions.append(["POWER_PURPLE",[i,j]])
 
     return actions
 

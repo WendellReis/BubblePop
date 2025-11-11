@@ -302,24 +302,38 @@ def verify_green(state,turn_power):
     return verify_red(state,(turn_power+1)%2)
 
 def is_free_bubble(p,pos):
-        i,j = pos
+    i,j = pos
 
-        if p[i][j] not in globals.COLORS:
-            return False
-
-        i+=1
-        while i < 6:
-            if p[i][j] not in globals.COLORS:
-                return True
+    if p[i][j] not in globals.COLORS:
         return False
+
+    i+=1
+    while i < 6:
+        if p[i][j] in globals.COLORS:
+            return False
+        i+=1
+    return True
 
 def verify_purple(state,turn_power):
     p = state.get('planet')[turn_power]
 
-    for i in range(6):
-        for j in range(5):
-            if is_free_bubble(p,(i,j)):
-                return True
+    p_rival = state.get('planet')[(turn_power+1)%2]
+    col = len(p_rival[0])
+    full = True
+    for j in range(col):
+        if p_rival[3][j] not in globals.COLORS:
+            full = False
+            break
+    if full:
+        for i in range(6):
+            for j in range(5):
+                if is_free_bubble(p,(i,j)):
+                    return True
+    else:
+        for i in range(6):
+            for j in range(5):
+                if is_free_bubble(p,(i,j)) and p_rival[3][j] not in globals.COLORS:
+                    return True
     return False
 
 def POWER_YELLOW(state,data):
