@@ -12,6 +12,8 @@ class Game:
 
         # Variável que indica se o estado atual deve ser desenhado
         self.is_dirty = True
+        self.last_state = {}
+        self.last_action = "START_GAME"
 
         conf = None
         with open("config.json", "r") as f:
@@ -51,6 +53,14 @@ class Game:
     def get_board(self):
         return self.board
     
+    def update_last_state(self):
+        atual = self.get_state()
+
+        if atual != self.last_state:
+            self.last_state = atual
+            return True
+        return False
+
     def get_score(self):
         return self.score
     
@@ -130,15 +140,14 @@ class Game:
         else:
             self.is_dirty = False
 
-    def next_state(self,act,data=None):
-        if data is None:
-            self.set_state(action.EXECUTE(self.get_state(),act))
-        else:
-            self.set_state(action.EXECUTE(self.get_state(),act,data))
+    def next_state(self,act,data):
+        self.last_state = self.get_state()
+        self.last_action = [act,data]
+        self.set_state(action.EXECUTE(self.get_state(),act,data))
         self.is_dirty = True
         self.memory = None
         self.record_state()
-
+        
     def get_state(self):
         state = {}
         state["turn"] = self.turn
@@ -194,7 +203,7 @@ class Game:
                         self.next_state("SETUP",self.memory)
                         self.memory = None
         else:
-            self.next_state("CHECK_WIN")
+            self.next_state("CHECK_WIN",-1)
 
     def swap_bubblees(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -212,8 +221,8 @@ class Game:
                         self.memory = None
                         self.is_dirty = True
                     elif self.adj(self.memory,cell):
-                        self.next_state("SWAP_BUBBLEES",[self.memory,cell])
                         self.board.deselect_sky_cell(self.memory)
+                        self.next_state("SWAP_BUBBLEES",[self.memory,cell])
                         self.memory = None
                         self.is_dirty = True
                         
@@ -234,16 +243,16 @@ class Game:
                         self.memory = None
                         self.is_dirty = True
                     elif self.adj(self.memory,cell) and (cell[0] == self.turn or self.memory[0] == self.turn):
+                        self.board.deselect_sky_cell(self.memory) 
                         self.next_state("DROP_BUBBLEES",[self.memory,cell])
-                        self.board.deselect_sky_cell(self.memory)
                         self.is_dirty = True
                         self.memory = None
 
     def check_matches(self,event):
-        self.next_state("CHECK_MATCHES")
+        self.next_state("CHECK_MATCHES",-1)
 
     def check_win(self,event):
-        self.next_state("CHECK_WIN")
+        self.next_state("CHECK_WIN",-1)
 
     def choose_power(self,event):
         if event.type == pygame.MOUSEBUTTONDOWN:

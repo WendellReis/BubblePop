@@ -1,7 +1,7 @@
 # Arquivo contendo as ações do jogo
 import globals
 
-def EXECUTE(state,action,data=None):
+def EXECUTE(state,action,data=-1):
     if action == "NAVIGATE":
         return NAVIGATE(state,data)
     
@@ -26,7 +26,7 @@ def EXECUTE(state,action,data=None):
     elif action == "POWER_BLUE":
         return POWER_BLUE(state,data)
     if s == globals.STATE_SETUP_SKY:
-        if data is None:
+        if data == -1:
             return SETUP_SKY(state,action)
         return SETUP_SKY(state,action,data)
     elif s == globals.STATE_SWAP_BUBBLEES:
@@ -58,7 +58,7 @@ def SETUP_SKY(state,action,data=None):
         if full:
             return NAVIGATE(state,globals.STATE_SWAP_BUBBLEES)
         return state
-    print("ERRO action.SETUP_SKY: Parametro 'action' invalido!")
+    print(f"ERRO action.SETUP_SKY: Parametro 'action'={action} invalido!")
 
 def SWAP_BUBBLESS(state,data):
     c1 = data[0]

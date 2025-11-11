@@ -82,10 +82,10 @@ def choose_power(state):
     return actions
     
 def check_macthes(state):
-    return ["CHECK_MATCHES"]
+    return ["CHECK_MATCHES",-1]
 
 def check_win(state):
-    return ["CHECK_WIN"]
+    return ["CHECK_WIN",-1]
 
 def power_yellow(state):
     actions = []
@@ -105,7 +105,7 @@ def power_yellow(state):
 
     return actions
 
-def swap_bubblees(state,power):
+def swap_bubblees_power(state,power):
     actions = []
 
     if power == "RED":
@@ -130,10 +130,10 @@ def swap_bubblees(state,power):
     return actions
 
 def power_red(state):
-    return swap_bubblees(state,"RED")
+    return swap_bubblees_power(state,"RED")
 
 def power_green(state):
-    return swap_bubblees(state,"GREEN")
+    return swap_bubblees_power(state,"GREEN")
 
 def power_blue(state):
     actions = []

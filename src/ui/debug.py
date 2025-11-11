@@ -44,7 +44,7 @@ class Debug:
         self.update(game)
         screen.blit(self.TEXTS["turn"],(650,50))
         screen.blit(self.TEXTS["turn_power"],(650,100))
-        if game.get_current_state == globals.STATE_ENDGAME:
+        if game.get_current_state() == globals.STATE_ENDGAME:
             text = self.render(f"Vitoria do jogador {game.get_winner()}")
             screen.blit(text,(650,150))
         else:
