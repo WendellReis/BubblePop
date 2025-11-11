@@ -113,6 +113,7 @@ def CHECK_WIN(state):
         state['turn_power'] = -1
         state['turn'] = (state.get('turn')+1)%2
     else:
+        state['turn_power'] = state.get('power_stack')[-1][0]
         state['current_state'] = globals.STATE_CHOOSE_POWER
     return state
 
@@ -127,7 +128,7 @@ def dfs(p,color,i,j):
     if j + 1 < 5 and p[i][j+1] == color:
         points+=dfs(p,color,i,j+1)
     if j - 1 >= 0 and p[i][j-1] == color:
-        points+=dfs(p,color[j-1])
+        points+=dfs(p,color,i,j-1)
     
     return points
 
@@ -188,6 +189,7 @@ def CHECK_MATCHES(state):
         state['current_state'] = globals.STATE_CHOOSE_POWER
     else:
         state['turn'] = (turn+1)%2
+        state['turn_power'] = -1
         state['current_state'] = globals.STATE_CHECK_WIN
 
     return state                    

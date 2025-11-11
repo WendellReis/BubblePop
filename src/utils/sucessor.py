@@ -69,10 +69,10 @@ def drop_bubblees(state):
 def choose_power(state):
     actions = []
     
-    powers = state.get('power_stack')[1]
+    powers = state.get('power_stack')[-1][1]
     for p in powers:
-        actions.append("ACCEPT_POWER",p)
-        actions.append("REJECT_POWER",p)
+        actions.append(["ACCEPT_POWER",p])
+        actions.append(["REJECT_POWER",p])
 
     return actions
     
