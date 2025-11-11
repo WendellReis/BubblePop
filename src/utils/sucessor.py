@@ -68,23 +68,83 @@ def drop_bubblees(state):
 
 def choose_power(state):
     actions = []
+
+    stack = state.get('power_stack')
+
+    if len(stack) == 0:
+        return [None]
     
-    powers = state.get('power_stack')[-1][1]
+    powers = stack[-1][1]
     for p in powers:
         actions.append(["ACCEPT_POWER",p])
         actions.append(["REJECT_POWER",p])
 
     return actions
     
-
 def check_macthes(state):
     return ["CHECK_MATCHES"]
 
 def check_win(state):
     return ["CHECK_WIN"]
 
-def endgame(state):
-    return [None]
+def power_yellow(state):
+    actions = []
+
+    turn_power = state.get('turn_power')
+    p = state.get('planet')[turn_power]
+
+    rows = len(p)
+    col = len(p[0])
+    for j in range(col):
+        i = rows-1
+        while i >= 0:
+            if p[i][j] in globals.COLORS:
+                actions.append(["POWER_YELLOW",[i,j]])
+                break
+            i-=1
+
+    return actions
+
+def swap_bubblees(state,power):
+    actions = []
+
+    if power == "RED":
+        idx = (state.get('turn_power')+1)%2
+    elif power == "GREEN":
+        idx = state.get('turn_power')
+
+    p = state.get('planet')[idx]
+    rows = len(p)
+    col = len(p[0])
+
+    for i in range(rows-1):
+        for j in range(col):
+            if p[i][j] in globals.COLORS and p[i+1][j] in globals.COLORS:
+                actions.append([f"POWER_{power}",[[i,j],[i+1,j]]])
+
+    for i in range(rows):
+        for j in range(col-1):
+            if p[i][j] in globals.COLORS and p[i][j+1] in globals.COLORS:
+                actions.append([f"POWER_{power}",[[i,j],[i,j+1]]])
+
+    return actions
+
+def power_red(state):
+    return swap_bubblees(state,"RED")
+
+def power_green(state):
+    return swap_bubblees(state,"GREEN")
+
+def power_blue(state):
+    actions = []
+
+    return actions
+
+def power_purple(state):
+    actions = []
+
+    return actions
+
 
 HANDLER = {
     globals.STATE_SETUP_SKY: setup_sky,
@@ -92,8 +152,12 @@ HANDLER = {
     globals.STATE_DROP_BUBBLEES: drop_bubblees,
     globals.STATE_CHECK_MATCHES: check_macthes,
     globals.STATE_CHOOSE_POWER: choose_power,
+    globals.STATE_POWER_YELLOW: power_yellow,
+    globals.STATE_POWER_RED: power_red,
+    globals.STATE_POWER_GREEN: power_green,
+    globals.STATE_POWER_BLUE: power_blue,
+    globals.STATE_POWER_PURPLE: power_purple,
     globals.STATE_CHECK_WIN: check_win,
-    globals.STATE_ENDGAME: endgame,
 }
 
 

@@ -94,7 +94,6 @@ def CHECK_WIN(state):
                     state['winner'] = (w+1)%2
                     state['current_state'] = globals.STATE_ENDGAME
                     return state
-
     if state.get('bubblees_in_bag') == 0:
         s0 = state.get('score')[0]
         s1 = state.get('score')[1]
@@ -107,7 +106,6 @@ def CHECK_WIN(state):
             state['winner'] = -1
         state['current_state'] = globals.STATE_ENDGAME
         return state
-    
     if len(state.get('power_stack')) == 0:
         state['current_state'] = globals.STATE_SETUP_SKY
         state['turn_power'] = -1
@@ -232,9 +230,8 @@ def REJECT_POWER(state,data):
 
     if len(state.get('power_stack')) == 0:
         state['turn_power'] = -1
-        state['current_turn'] = globals.STATE_CHECK_WIN
-        state['turn'] = (state.get('turn')+1)%2
-
+        state['current_state'] = globals.STATE_CHECK_WIN
+        
     return state
 
 def verify_power(state,data):
