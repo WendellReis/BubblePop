@@ -138,13 +138,28 @@ def power_green(state):
 def power_blue(state):
     actions = []
 
+    turn_power = state.get('turn_power')
+    p = state.get('planet')[(turn_power+1)%2]
+    full = True
+    col = len(p[0])
+    for j in range(col):
+        if p[3][j] not in globals.COLORS:
+            full = False
+            break
+
+    sky = state.get('sky')
+    col = len(sky[0])
+    for j in range(col):
+        if sky[(turn_power+1)%2][j] in globals.COLORS:
+            if full or p[3][j] not in globals.COLORS:
+                actions.append(["POWER_BLUE",[(turn_power+1)%2,j]])
+    
     return actions
 
 def power_purple(state):
     actions = []
 
     return actions
-
 
 HANDLER = {
     globals.STATE_SETUP_SKY: setup_sky,
@@ -159,7 +174,6 @@ HANDLER = {
     globals.STATE_POWER_PURPLE: power_purple,
     globals.STATE_CHECK_WIN: check_win,
 }
-
 
 def GET(state):
     current_state = state.get('current_state')
