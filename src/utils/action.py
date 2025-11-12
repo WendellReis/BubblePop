@@ -1,7 +1,9 @@
 # Arquivo contendo as ações do jogo
 import globals
+import copy
 
-def EXECUTE(state,action,data=-1):
+def EXECUTE(st,action,data=-1):
+    state = copy.deepcopy(st)
     if action == "NAVIGATE":
         return NAVIGATE(state,data)
     

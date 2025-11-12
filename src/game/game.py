@@ -2,9 +2,11 @@ import random
 import time
 import json
 import pygame
-import src.utils.action as action
+import src.utils.sucessor as sucessor  
 import globals
+from src.utils.GameStateTree import GameStateTree
 from src.game.board import Board
+import src.utils.action as action
 
 class Game:
     def __init__(self,seed=time.time()):
@@ -43,11 +45,9 @@ class Game:
         self.turn_power = conf["turn_power"]
 
         self.memory = None
-        self.history = [self.get_state()]
-        self.record_state()
-        self.last_state = self.get_state()
-        self.last_action = ["NOTHING",-1]
         self.load_buttons()
+        
+        self.tree = GameStateTree(self)
 
     def get_board(self):
         return self.board
@@ -118,9 +118,6 @@ class Game:
     
     def get_back_2_btn(self):
         return self.back_2_btn
-    
-    def record_state(self):
-        self.history.append(self.get_state())
 
     def get_dirty(self):
         return self.is_dirty
@@ -132,12 +129,9 @@ class Game:
             self.is_dirty = False
 
     def next_state(self,act,data):
-        self.last_state = self.get_state()
-        self.last_action = [act,data]
-        self.set_state(action.EXECUTE(self.get_state(),act,data))
+        self.tree.go_to_state(act,data)
         self.is_dirty = True
         self.memory = None
-        self.record_state()
         
     def get_state(self):
         state = {}
@@ -342,13 +336,10 @@ class Game:
         self.state_handlers[self.current_state](event)
 
     def check_buttons(self,event):
-        if self.back_btn["rect"].collidepoint(event.pos) and len(self.history) > 1:
-            self.set_state(self.history[-2])
-            self.history.pop()
-        elif self.back_2_btn["rect"].collidepoint(event.pos) and len(self.history) > 2:
-            self.set_state(self.history[-3])
-            self.history.pop()
-            self.history.pop()
+        if self.back_btn["rect"].collidepoint(event.pos):
+            pass
+        elif self.back_2_btn["rect"].collidepoint(event.pos):
+            pass
         elif self.current_state == globals.STATE_SWAP_BUBBLEES and self.skip_btn["rect"].collidepoint(event.pos):
             self.next_state("NAVIGATE",globals.STATE_DROP_BUBBLEES)
             if self.memory is not None:
@@ -362,3 +353,15 @@ class Game:
         if c1[1] == c2[1] and (c1[0] == c2[0]+1 or c2[0] == c1[0]+1):
             return True
         return False
+    
+    def possible_states(self,state=None):
+        if state is None:
+            state = self.get_state()
+
+        states = []
+        actions = sucessor.GET(state)
+        for act in actions:
+            op,data = act
+            states.append(action.EXECUTE(state,op,data))
+        
+        return states

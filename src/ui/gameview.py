@@ -163,9 +163,9 @@ class GameView:
         if game.get_current_state() == globals.STATE_SWAP_BUBBLEES:
             skip_btn = game.get_skip_btn()
             self.screen.blit(self.skip_sky_image,skip_btn["pos"])
-        if len(game.history) > 1:
+        if True:
             back_btn = game.get_back_btn()
             self.screen.blit(self.back_btn_image,back_btn["pos"])
-        if len(game.history) > 2:
+        if True:
             back_2_btn = game.get_back_2_btn()
             self.screen.blit(self.back_2_btn_image,back_2_btn["pos"])

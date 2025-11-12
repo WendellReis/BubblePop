@@ -1,11 +1,6 @@
 import pygame
-import copy
 from src.game.game import Game
 from src.ui.gameview import GameView
-import src.utils.sucessor as sucessor
-from src.utils.GameStateTree import GameStateTree
-import src.utils.action as action
-
 
 if __name__ == '__main__':
     show_graph = True
