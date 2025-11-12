@@ -2,11 +2,9 @@ import random
 import time
 import json
 import pygame
-import src.utils.sucessor as sucessor  
 import globals
 from src.utils.GameStateTree import GameStateTree
 from src.game.board import Board
-import src.utils.action as action
 
 class Game:
     def __init__(self,seed=time.time()):
@@ -62,11 +60,13 @@ class Game:
             "rect": pygame.Rect(x,y,120,120)
         }
 
+        '''
         x,y = (880,760)
         self.back_2_btn = {
             "pos": (x,y),
             "rect": pygame.Rect(x,y,120,120)
         }
+        '''
 
         x,y = (853,700)
         self.skip_btn = {
@@ -91,6 +91,10 @@ class Game:
                     }
                 }
             )
+        
+        # Botão para mostrar árvore
+        x,y = (650,900)
+        self.debug_button = pygame.Rect(x,y,60,60)
 
     def get_power_buttons(self):
         return self.power_buttons
@@ -171,6 +175,7 @@ class Game:
         # Itens da bolsa (bag)
         self.board.set_bubblees_in_bag(state.get("bubblees_in_bag"))
         self.board.set_bag_color(state.get("bag_color"))
+        self.is_dirty = True
 
     def setup_sky(self,event):
         if self.board.verify_setup_sky():
@@ -337,15 +342,15 @@ class Game:
 
     def check_buttons(self,event):
         if self.back_btn["rect"].collidepoint(event.pos):
-            pass
-        elif self.back_2_btn["rect"].collidepoint(event.pos):
-            pass
+            self.tree.got_to_previous()
         elif self.current_state == globals.STATE_SWAP_BUBBLEES and self.skip_btn["rect"].collidepoint(event.pos):
             self.next_state("NAVIGATE",globals.STATE_DROP_BUBBLEES)
             if self.memory is not None:
                 self.board.deselect_sky_cell(self.memory)
                 self.is_dirty = True
                 self.memory = None
+        elif self.debug_button.collidepoint(event.pos):
+            self.tree.draw_graph()
 
     def adj(self,c1,c2):
         if c1[0] == c2[0] and (c1[1] == c2[1]+1 or c2[1] == c1[1]+1):
@@ -354,14 +359,3 @@ class Game:
             return True
         return False
     
-    def possible_states(self,state=None):
-        if state is None:
-            state = self.get_state()
-
-        states = []
-        actions = sucessor.GET(state)
-        for act in actions:
-            op,data = act
-            states.append(action.EXECUTE(state,op,data))
-        
-        return states

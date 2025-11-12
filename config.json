@@ -1,9 +1,9 @@
 {
     "set_sky": true,
-    "current_state": 1,
+    "current_state": 2,
     "turn": 0,
     "bubblees_in_bag":10,
-    "bag_color": null,
+    "bag_color": "y",
     "sky": [
         ["r","g","r","r","r"],
         ["r","x","r","r","x"]

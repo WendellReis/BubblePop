@@ -86,8 +86,9 @@ def DROP_BUBBLEES(state,data):
             x-=1
         planet[x+1][y] = color
     
-    state["current_state"] = globals.STATE_CHECK_MATCHES
-    return state
+    return CHECK_MATCHES(state)
+    #state["current_state"] = globals.STATE_CHECK_MATCHES
+    #return state
 
 def CHECK_WIN(state):
     for w in [0,1]:
@@ -192,7 +193,8 @@ def CHECK_MATCHES(state):
     else:
         state['turn'] = (turn+1)%2
         state['turn_power'] = -1
-        state['current_state'] = globals.STATE_CHECK_WIN
+        return CHECK_WIN(state)
+        #state['current_state'] = globals.STATE_CHECK_WIN
 
     return state                    
 
@@ -234,7 +236,8 @@ def REJECT_POWER(state,data):
 
     if len(state.get('power_stack')) == 0:
         state['turn_power'] = -1
-        state['current_state'] = globals.STATE_CHECK_WIN
+        return CHECK_WIN(state)
+        #state['current_state'] = globals.STATE_CHECK_WIN
         
     return state
 
@@ -351,8 +354,8 @@ def POWER_YELLOW(state,data):
     if len(state.get('power_stack')) == 0:
         state['turn_power'] = -1
     
-    state['current_state'] = globals.STATE_CHECK_WIN
-    return state
+    #state['current_state'] = globals.STATE_CHECK_WIN
+    return CHECK_WIN(state)
 
 def POWER_RED(state,data):
     p = state.get('planet')[(state.get('turn_power')+1)%2]
@@ -362,8 +365,9 @@ def POWER_RED(state,data):
     p[c1[0]][c1[1]] = p[c2[0]][c2[1]]
     p[c2[0]][c2[1]] = aux
 
-    state['current_state'] = globals.STATE_CHECK_MATCHES
-    return state
+    return CHECK_MATCHES(state)
+    #state['current_state'] = globals.STATE_CHECK_MATCHES
+    #return state
 
 def POWER_GREEN(state,data):
     p = state.get('planet')[state.get('turn_power')]
@@ -373,8 +377,9 @@ def POWER_GREEN(state,data):
     p[c1[0]][c1[1]] = p[c2[0]][c2[1]]
     p[c2[0]][c2[1]] = aux
 
-    state['current_state'] = globals.STATE_CHECK_MATCHES
-    return state
+    return CHECK_MATCHES(state)
+    #state['current_state'] = globals.STATE_CHECK_MATCHES
+    #return state
 
 def POWER_PURPLE(state,data):
     turn_power = state.get('turn_power')
@@ -390,8 +395,8 @@ def POWER_PURPLE(state,data):
         i-=1
     
     p[i+1][y] = color
-    state['current_state'] = globals.STATE_CHECK_WIN
-    return state
+    #state['current_state'] = globals.STATE_CHECK_WIN
+    return CHECK_WIN(state)
 
 def POWER_BLUE(state,data):
     turn_power = state.get('turn_power')
@@ -410,5 +415,6 @@ def POWER_BLUE(state,data):
         x-=1
 
     p[x+1][y] = color
-    state['current_state'] = globals.STATE_CHECK_MATCHES
-    return state
+    return CHECK_MATCHES(state)
+    #state['current_state'] = globals.STATE_CHECK_MATCHES
+    #return state

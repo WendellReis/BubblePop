@@ -24,3 +24,18 @@ ASCII = {
 
 # --- Outras Variáveis ---
 COLORS = list(ASCII.keys())
+
+STR_STATES = {
+        STATE_SETUP_SKY: 'SET',
+        STATE_SWAP_BUBBLEES: 'SW',
+        STATE_DROP_BUBBLEES: 'D',
+        STATE_CHECK_MATCHES: 'CM',
+        STATE_CHECK_WIN: 'CW',
+        STATE_ENDGAME: 'END',
+        STATE_CHOOSE_POWER: 'CH',
+        STATE_POWER_RED: 'R',
+        STATE_POWER_BLUE: 'B',
+        STATE_POWER_YELLOW: 'Y',
+        STATE_POWER_PURPLE: 'P',
+        STATE_POWER_GREEN: 'G'
+}
