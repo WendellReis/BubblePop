@@ -29,10 +29,12 @@ def EXECUTE(state,action,data=-1):
         if data == -1:
             return SETUP_SKY(state,action)
         return SETUP_SKY(state,action,data)
-    elif s == globals.STATE_SWAP_BUBBLEES:
+    elif action == "SWAP_BUBBLEES":
         return SWAP_BUBBLESS(state,data)
-    elif s == globals.STATE_DROP_BUBBLEES:
+    elif action == "DROP_BUBBLEES":
         return DROP_BUBBLEES(state,data)
+    elif action == "NOTHING":
+        return state
     
     print("ERRO action.EXECUTE")
 

@@ -34,7 +34,7 @@ def setup_sky(state):
     return actions
 
 def swap_bubblees(state):
-    actions = ["NAVIGATE",globals.STATE_DROP_BUBBLEES]
+    actions = [["NAVIGATE",globals.STATE_DROP_BUBBLEES]]
 
     sky = state.get('sky')
     cols = len(sky[0])
@@ -72,7 +72,7 @@ def choose_power(state):
     stack = state.get('power_stack')
 
     if len(stack) == 0:
-        return [None]
+        return [["CHECK_WIN",-1]]
     
     powers = stack[-1][1]
     for p in powers:
@@ -82,10 +82,10 @@ def choose_power(state):
     return actions
     
 def check_macthes(state):
-    return ["CHECK_MATCHES",-1]
+    return [["CHECK_MATCHES",-1]]
 
 def check_win(state):
-    return ["CHECK_WIN",-1]
+    return [["CHECK_WIN",-1]]
 
 def power_yellow(state):
     actions = []
@@ -179,7 +179,7 @@ def power_purple(state):
         if p2[3][j] not in globals.COLORS:
             full=False
             break
-    print(full)
+
     rows = len(p1)
     for i in range(rows):
         for j in range(col):
@@ -206,5 +206,5 @@ def GET(state):
     current_state = state.get('current_state')
     handler = HANDLER.get(current_state)
     if handler is None:
-        return [None]
+        return [["NOTHING",-1]]
     return handler(state)

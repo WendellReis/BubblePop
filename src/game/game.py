@@ -12,8 +12,6 @@ class Game:
 
         # Variável que indica se o estado atual deve ser desenhado
         self.is_dirty = True
-        self.last_state = {}
-        self.last_action = "START_GAME"
 
         conf = None
         with open("config.json", "r") as f:
@@ -43,23 +41,16 @@ class Game:
         self.power_stack = conf["power_stack"]
         self.winner = conf["winner"]
         self.turn_power = conf["turn_power"]
-    
+
         self.memory = None
         self.history = [self.get_state()]
         self.record_state()
-        
+        self.last_state = self.get_state()
+        self.last_action = ["NOTHING",-1]
         self.load_buttons()
 
     def get_board(self):
         return self.board
-    
-    def update_last_state(self):
-        atual = self.get_state()
-
-        if atual != self.last_state:
-            self.last_state = atual
-            return True
-        return False
 
     def get_score(self):
         return self.score
