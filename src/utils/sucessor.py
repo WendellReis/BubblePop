@@ -16,10 +16,10 @@ def setup_sky(state):
             count += 1
 
     if count > bubblees_in_bag:
-        return [None]
+        return [["CHECK_WIN",-1]]
     
     if count == 12: # Céu completo
-        return ["NAVIGATE",globals.STATE_SWAP_BUBBLEES]
+        return [["NAVIGATE",globals.STATE_SWAP_BUBBLEES]]
     
     if state.get('bag_color') not in globals.COLORS:
         for c in globals.COLORS: # Todos os resultados para o sorteio do bubblee

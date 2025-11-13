@@ -99,7 +99,7 @@ def CHECK_WIN(state):
                     state['winner'] = (w+1)%2
                     state['current_state'] = globals.STATE_ENDGAME
                     return state
-    if state.get('bubblees_in_bag') == 0:
+    if state.get('bubblees_in_bag') == 0 or not verify_bag(state):
         s0 = state.get('score')[0]
         s1 = state.get('score')[1]
 
@@ -203,7 +203,20 @@ def remove_power(state,power):
     stack[-1][1].remove(power)
     if len(stack[-1][1]) == 0:
         stack.pop()
+
+def verify_bag(state):
+    count = 0
+
+    sky = state.get('sky')
+    col = len(sky[0])
+    for j in range(col):
+        if sky[0][j] not in globals.COLORS:
+            count+=1
+        if sky[1][j] not in globals.COLORS:
+            count+=1
     
+    return count <= state.get('bubblees_in_bag')
+
 def ACCEPT_POWER(state,data):
     if not verify_power(state,data):
         remove_power(state,data)
@@ -211,7 +224,10 @@ def ACCEPT_POWER(state,data):
 
         if len(stack) == 0:
             state['turn_power'] = -1
-            state['current_state'] = globals.STATE_SETUP_SKY
+            if verify_bag(state):
+                state['current_state'] = globals.STATE_SETUP_SKY
+            else:
+                return CHECK_WIN(state)
         
     else:
         navigate_to_power(state,data)

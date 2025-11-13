@@ -61,9 +61,6 @@ class GameView:
         self.accept_icon = pygame.image.load('assets/images/accept.png').convert_alpha()
         self.reject_icon = pygame.image.load('assets/images/reject.png').convert_alpha()
 
-        self.debug_image = pygame.image.load('assets/images/debug.png').convert_alpha()
-        self.debug_image = pygame.transform.scale(self.debug_image,(60,60))
-
     def render_text(self):
         self.rendered_text = {
             "bubblees_in_bag": self.fontsmall.render(str(self.cache["bubblees_in_bag"]), True, (255, 255, 255)),
@@ -170,5 +167,3 @@ class GameView:
         back_btn = game.get_back_btn()
         self.screen.blit(self.back_btn_image,back_btn["pos"])
         
-
-        self.screen.blit(self.debug_image,(650,900))

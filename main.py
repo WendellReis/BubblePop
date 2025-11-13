@@ -1,9 +1,9 @@
 import pygame
 from src.game.game import Game
 from src.ui.gameview import GameView
+from src.ui.GameStateTreeViewer import GameStateTreeViewer
 
 if __name__ == '__main__':
-    show_graph = True
     game = Game(seed=1234)
 
     pygame.init()
@@ -18,7 +18,13 @@ if __name__ == '__main__':
                 running = False
                 break
 
+            # mostra grafo ao pressionar G
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_g:
+                if hasattr(game, "tree"):
+                    GameStateTreeViewer.show(game.tree)
+
             game.update(event)
+
             if game.get_dirty():
                 view.draw(game)
                 game.set_dirty(False)

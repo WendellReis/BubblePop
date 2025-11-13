@@ -84,9 +84,6 @@ class Game:
                 }
             )
         
-        # Botão para mostrar árvore
-        x,y = (650,900)
-        self.debug_button = pygame.Rect(x,y,60,60)
 
     def get_power_buttons(self):
         return self.power_buttons
@@ -338,8 +335,6 @@ class Game:
                 self.board.deselect_sky_cell(self.memory)
                 self.is_dirty = True
                 self.memory = None
-        elif self.debug_button.collidepoint(event.pos):
-            self.tree.draw_graph()
 
     def adj(self,c1,c2):
         if c1[0] == c2[0] and (c1[1] == c2[1]+1 or c2[1] == c1[1]+1):
