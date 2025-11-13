@@ -40,7 +40,6 @@ class GameView:
         self.board_image = pygame.transform.scale(self.board_image,(420,self.screen_height)).convert()
 
         self.back_btn_image = pygame.image.load('assets/images/back_btn.png').convert_alpha()
-        self.back_2_btn_image = pygame.image.load('assets/images/back_2_btn.png').convert_alpha()
         self.skip_sky_image = pygame.image.load('assets/images/skip_sky_btn.png').convert_alpha()
         self.skip_sky_image = pygame.transform.scale(self.skip_sky_image,(120,55)).convert_alpha()
 
@@ -166,15 +165,10 @@ class GameView:
         if game.get_current_state() == globals.STATE_SWAP_BUBBLEES:
             skip_btn = game.get_skip_btn()
             self.screen.blit(self.skip_sky_image,skip_btn["pos"])
-        '''
-        if True:
-            back_2_btn = game.get_back_2_btn()
-            self.screen.blit(self.back_2_btn_image,back_2_btn["pos"])
-        '''
         
-        if True:
-            back_btn = game.get_back_btn()
-            self.screen.blit(self.back_btn_image,back_btn["pos"])
+    
+        back_btn = game.get_back_btn()
+        self.screen.blit(self.back_btn_image,back_btn["pos"])
         
 
         self.screen.blit(self.debug_image,(650,900))

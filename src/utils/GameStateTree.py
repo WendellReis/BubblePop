@@ -130,6 +130,8 @@ class GameStateTree:
 
     def draw_graph(self):
         # layout
+        plt.ion()
+        plt.figure(figsize=(14, 10))
         try:
             pos = nx.nx_agraph.graphviz_layout(self.G, prog="dot")
         except Exception:
@@ -162,7 +164,9 @@ class GameStateTree:
             if self.state_id(state) == self.current_id:
                 colors.append("green")
             else:
-                if state.get('turn_power') == -1:
+                if state.get('current_state') == globals.STATE_SETUP_SKY and state.get('bag_color') not in globals.COLORS:
+                    colors.append("orange")
+                elif state.get('turn_power') == -1:
                     colors.append("red" if state.get("turn") == 0 else "blue")
                 else:
                     colors.append("red" if state.get("turn_power") == 0 else "blue")

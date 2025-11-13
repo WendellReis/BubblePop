@@ -60,14 +60,6 @@ class Game:
             "rect": pygame.Rect(x,y,120,120)
         }
 
-        '''
-        x,y = (880,760)
-        self.back_2_btn = {
-            "pos": (x,y),
-            "rect": pygame.Rect(x,y,120,120)
-        }
-        '''
-
         x,y = (853,700)
         self.skip_btn = {
             "pos":(x,y),
@@ -119,9 +111,6 @@ class Game:
 
     def get_back_btn(self):
         return self.back_btn
-    
-    def get_back_2_btn(self):
-        return self.back_2_btn
 
     def get_dirty(self):
         return self.is_dirty
